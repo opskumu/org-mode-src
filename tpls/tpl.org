@@ -1,0 +1,10 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/org.css"/>
+#+AUTHOR: Kumu
+#+EMAIL: opskumu@gmail.com
+#+STARTUP: overview
+#+STARTUP: content
+#+STARTUP: showall
+#+STARTUP: showeverything
+#+OPTIONS: ^:nil
+#+ATTR_ORG: :width 500
+#+ATTR_HTML: :width 500
