@@ -61,7 +61,7 @@ QEMU 提供了对多种块存储设备的模拟，包括 IDE、SCSI、软盘、U
 
 qemu-kvm 提供 =-drive= 参数来详细定义一个存储驱动器：
 
-#+BEGIN_EXAMPLE
+#+BEGIN_SRC
 -drive option[,option[,option[,...]]]
    Define a new drive. Valid options are:
 
@@ -80,7 +80,7 @@ qemu-kvm 提供 =-drive= 参数来详细定义一个存储驱动器：
        Can be used to specifiy format=raw to avoid interpreting an untrusted format
        header.
     ... ...
-#+END_EXAMPLE
+#+END_SRC
 
 cache 不同模式工作原理图：
 

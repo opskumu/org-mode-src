@@ -6,9 +6,9 @@
 
 2015-01-12 18:10 左右公司某游戏日志监控报警，查看日志显示如下错误：
 
-#+BEGIN_EXAMPLE
+#+BEGIN_QUOTE
 Row size too large (> 8126). Changing some columns to TEXT or BLOB or using ROW_FORMAT=DYNAMIC or ROW_FORMAT=COMPRESSED may help. In current row format, BLOB prefix of 768 bytes is stored inline.
-#+END_EXAMPLE
+#+END_QUOTE
 
 刚开始，只有一个玩家的相关数据回写 DB，后来影响的用户越来越多，日志基本上是这样的错误信息。
 
