@@ -19,7 +19,7 @@ Note：如果你使用 OverlayFS，使用 =overlay2= 而不是 =overlay= 驱动�
 - 因为 inode 以及后续的 Docker 版本兼容问题，不推荐使用 =overlay= ，满足条件下优先使用 =overlay2=
 - 以下文件系统支持：
   - ext4（只支持 RHEL 7.1）
-  - xfs（RHEL 7.2 或更高版本），=d_type=true= 必须开启。使用 =xfs_info= 验证 =ftype= 选项是否为 =1= 
+  - xfs（RHEL 7.2 或更高版本）， =d_type=true= 必须开启。使用 =xfs_info= 验证 =ftype= 选项是否为 =1= 
 - 修改 Docker 存储驱动会使已存在的容器和镜像不可访问，可以提前使用 =docker save= 保存镜像或推送到 Docker Hub（也可以是内部私有镜像仓库），防止镜像丢失
 
 #+BEGIN_SRC
@@ -41,7 +41,7 @@ xfs_info /PATH/TO/DEVICE | grep ftype   # 验证是否已支持
 
 OverlayFS 层（layers） 在单个 Linux 主机上分为两个目录，并且将它们呈现为单个目录。这些目录统称为层（layers），统一过程称为联合挂载（union mount）。OverlayFS 把下层目录称为 =lowerdir= ，上层目录称为 =upperdir= ，统一视图通过称为 =merged= 自身目录暴露。
 
-=overlay= 驱动仅适用单个 lower OverlayFS 层，因此需要通过硬链接来实现多层镜像，=overlay2= 驱动原生支持 128 个 lower OverlayFS 层。这个功能为与层相关的命令如 =docker build= 和 =docker commit= 提供了更好的性能，并且在后备文件系统上消耗更少的 inode。
+=overlay= 驱动仅适用单个 lower OverlayFS 层，因此需要通过硬链接来实现多层镜像， =overlay2= 驱动原生支持 128 个 lower OverlayFS 层。这个功能为与层相关的命令如 =docker build= 和 =docker commit= 提供了更好的性能，并且在后备文件系统上消耗更少的 inode。
 
 *** 磁盘上的镜像和容器层
 
@@ -119,7 +119,7 @@ OverlayFS 层（layers） 在单个 Linux 主机上分为两个目录，并且�
 
 =overlay= 驱动仅适用于两层，这意味着多层镜像不能实现多个 OverlayFS 层。取而代之，每个镜像层都在 =/var/lib/docker/overlay= 下实现自己的目录。通过硬链接引用与底层共享数据的方式来节省空间。从 Docker 1.10 开始，镜像层 IDs 不再对应于 =/var/lib/docker= 中的目录名。
 
-为了创建一个容器，=overlay= 驱动组合顶层的目录以及容器的新目录。镜像的顶层是叠加层中的 =lowerdir= ，并且是只读挂载的。容器的新目录是 =upperdir= 并且是可写的。
+为了创建一个容器， =overlay= 驱动组合顶层的目录以及容器的新目录。镜像的顶层是叠加层中的 =lowerdir= ，并且是只读挂载的。容器的新目录是 =upperdir= 并且是可写的。
 
 *** 磁盘上的镜像和容器层
 
@@ -210,28 +210,28 @@ workdir=/var/lib/docker/overlay/ec444863a55a.../work)
 
 考虑三个容器通过 =overlay= 打开文件读取的场景。
 
-- 容器层中不存在该文件：如果容器打开读取一个并不存在容器层（=upperdir=），则从镜像层（=lowerdir=）读取该文件。这会导致很少的性能开销。
-- 文件仅存在于容器层：如果容器打开读取一个存在于容器层（=upperdir=）但不存在于镜像层（=lowerdir=）的文件，则直接从容器层中读取该文件。
+- 容器层中不存在该文件：如果容器打开读取一个并不存在容器层（ =upperdir= ），则从镜像层（ =lowerdir= ）读取该文件。这会导致很少的性能开销。
+- 文件仅存在于容器层：如果容器打开读取一个存在于容器层（ =upperdir= ）但不存在于镜像层（ =lowerdir= ）的文件，则直接从容器层中读取该文件。
 - 该文件同时存在于容器层和镜像层：如果容器打开读取一个同时存在于容器层（ =upperdir= ）和镜像层（ =lowerdir= ）的文件，则容器层（ =upperdir= ）会覆盖镜像层（ =lowerdir= ） 相同名字的文件。
 
 *** 修改文件或目录
 
 同样分三个场景来介绍修改。
 
-- 第一次写入文件：容器第一次写入现有文件时，这个文件还不存在于容器层（ =upperdir= ）。=overlay=/=overlay2= 驱动程序从镜像层（=lowerdir=）执行一个 =copy_up= 操作到容器层（ =upperdir= ）。然后，容器将更改写入容器层中的文件的新副本。但是，OverlayFS 工作在文件级别而不是块级别，意味着所有 OverlayFS =copy_up= 操作都会复制整个文件，即使文件非常大，并且只修改了其中的一小部分。这就对容器写入性能产生显著的影响。不过，有两件事值得注意：
+- 第一次写入文件：容器第一次写入现有文件时，这个文件还不存在于容器层（ =upperdir= ）。 =overlay=/=overlay2= 驱动程序从镜像层（ =lowerdir= ）执行一个 =copy_up= 操作到容器层（ =upperdir= ）。然后，容器将更改写入容器层中的文件的新副本。但是，OverlayFS 工作在文件级别而不是块级别，意味着所有 OverlayFS =copy_up= 操作都会复制整个文件，即使文件非常大，并且只修改了其中的一小部分。这就对容器写入性能产生显著的影响。不过，有两件事值得注意：
 
   - =copy_up= 操作仅在第一次写入文件时发生，对同一文件的后续写入操作只对已复制到容器的文件副本进行操作。
   - OverlayFS 仅适用于两层，意味着它性能应该是优于 AUFS 的，当搜索多个层的镜像文件时，AUFS 会出现明显的延迟。这个优势适用于 =overlay= 和 =overlay2= ， =overlayfs2= 在初始读取时的性能略低于 =overlayfs= ，因为它会查看更多层级，但是它会缓存结果。
-- 删除文件或者目录：在容器中删除文件时，会在容器层（ =upperdir= ）中创建一个 whiteout 文件。镜像层（=lowerdir=）中文件的版本并不会被删除（因为 =lowerdir= 是只读的）。但是，whiteout 文件会阻止其在容器中可用。当在容器中删除目录时，会在容器层（ =upperdir= ）中创建一个 opaque 目录。它的工作机制同 whiteout，并且有效地防止目录被访问，即使它仍然存在于镜像层（ =lowerdir= ）。
+- 删除文件或者目录：在容器中删除文件时，会在容器层（ =upperdir= ）中创建一个 whiteout 文件。镜像层（ =lowerdir= ）中文件的版本并不会被删除（因为 =lowerdir= 是只读的）。但是，whiteout 文件会阻止其在容器中可用。当在容器中删除目录时，会在容器层（ =upperdir= ）中创建一个 opaque 目录。它的工作机制同 whiteout，并且有效地防止目录被访问，即使它仍然存在于镜像层（ =lowerdir= ）。
 - 重命名目录：仅当源路径和目标路径都在顶层时，才允许目录调用 =rename(2)= ，否则会返回 =EXDEV= error（"cross-device link not permitted"）。
 
 ** OverlayFS 和 Docker 性能
 
-=overlay2= 和 =overlay= 驱动比 =aufs= 和 =devicemapper= 拥有更好的性能。在某些情况下，=overlay2= 的性能表现可能比 =btrfs= 还要好。不过要注意以下几点：
+=overlay2= 和 =overlay= 驱动比 =aufs= 和 =devicemapper= 拥有更好的性能。在某些情况下， =overlay2= 的性能表现可能比 =btrfs= 还要好。不过要注意以下几点：
 
 - *Page Caching* ： OverlayFS 支持页级别的缓存共享。多个容器访问同样的文件共享此文件的同一个页缓存。这个特性使得 =overlay= 和 =overlay2= 驱动高效利用内存以及高密度使用案例的优先选择如 PaaS。
 - *copy_up* ： 同 AUFS 一样，容器第一次写入文件时，OverlayFS 会有一个 copy-up 的操作。这会增加写入操作的延迟，特别是大文件操作。不过，一旦文件已经被复制，后续文件的写操作都是发生在上层的，不再会有 copy-up 的操作。OverlayFS 的 =copy_up= 比 AUFS 同样的操作要更快，因为 AUFS 比 OverlayFS 拥有更多的层级，如果在多个 AUFS 层级搜索可能会造成大的延迟。=overlay2= 也支持多层，但通过缓存减轻了性能损失。
-- *Inode limits* ：使用 =overlay= 存储驱动会导致过多的 inode 损耗。特别是 Docker 主机上存在大量的镜像和容器时尤为明显。格式化文件系统增加可用的 inode 数量是唯一的解决方式。为了避免这个问题，因此建议尽可能的使用 =overlay2=。
+- *Inode limits* ：使用 =overlay= 存储驱动会导致过多的 inode 损耗。特别是 Docker 主机上存在大量的镜像和容器时尤为明显。格式化文件系统增加可用的 inode 数量是唯一的解决方式。为了避免这个问题，因此建议尽可能的使用 =overlay2= 。
 
 *** 性能最佳实践
 
@@ -243,5 +243,5 @@ workdir=/var/lib/docker/overlay/ec444863a55a.../work)
 ** OverlayFS 兼容性限制
 
 - *open(2)* ：OverlayFS 只实现了 POSIX 标准的子集。这可能导致某些 OverlayFS 操作破坏了 POSIX 标准。其中一个操作就是 copy-up 操作。假设你的应用调用 =fd1=open("foo", O_RDONLY)= 和 ~fd2=open("foo", O_RDWR)~ 。在这个案例中，你的应用期望 =fd1= 和 =fd2= 引用同一个文件。但是，因为发生了 copy-up 操作导致第二次调用 =open(2)= ，文件描述符指向的是不同的文件。 =fd1= 继续引用镜像层（ =lowerdir= ）而 =fd2= 引用的文件在容器层（ =upperdir= ）。解决方式是 =touch= 这些文件，引发 copy-up 操作发生。所有的后续 =open(2)= 操作无论是读写访问模式都引用容器层( =upperdir= )的文件。
-  - =yum= 是已知受影响的，除非 =yum-plugin-ovl= 已经安装了。如果 =yum-plugin-ovl= 包在你的发行版中不可用如 RHEL/CentOS 6.8 或 7.2，你可能需要在运行 =yum install= 前执行 =touch /var/lib/rpm/*=。=yum-plugin-ovl= 软件包实现了针对 =yum= 的 =touch= 变通方案。
+  - =yum= 是已知受影响的，除非 =yum-plugin-ovl= 已经安装了。如果 =yum-plugin-ovl= 包在你的发行版中不可用如 RHEL/CentOS 6.8 或 7.2，你可能需要在运行 =yum install= 前执行 =touch /var/lib/rpm/*= 。=yum-plugin-ovl= 软件包实现了针对 =yum= 的 =touch= 变通方案。
 - *rename(2)* ：OverlayFS 不完全支持 =rename(2)= 系统调用。你的应用需要检测它的失败以及返回 "copy and unlink" 策略。

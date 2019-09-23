@@ -1069,7 +1069,7 @@ VOLUME ["/data"]
 USER daemon
 #+END_SRC
 
-指定运行容器时的用户名或 UID，后续的 =RUN=、=CMD=、=ENTRYPOINT= 也会使用指定用户。
+指定运行容器时的用户名或 UID，后续的 =RUN= 、 =CMD= 、 =ENTRYPOINT= 也会使用指定用户。
 
 *** WORKDIR
 
@@ -1077,7 +1077,7 @@ USER daemon
 WORKDIR /path/to/workdir
 #+END_SRC
 
-为后续的 =RUN=、=CMD=、=ENTRYPOINT= 指令配置工作目录。可以使用多个 =WORKDIR= 指令，后续命令如果参数是相对路径，则会基于之前命令指定的路径。
+为后续的 =RUN= 、 =CMD= 、 =ENTRYPOINT= 指令配置工作目录。可以使用多个 =WORKDIR= 指令，后续命令如果参数是相对路径，则会基于之前命令指定的路径。
 
 #+BEGIN_SRC
 WORKDIR /a
@@ -1261,7 +1261,7 @@ RUN apt-get update && apt-get install -y \
     s3cmd=1.1.0*
 #+END_SRC
 
-- =CMD=: 推荐使用 =CMD [“executable”, “param1”, “param2”…]= 这种格式，=CMD [“param”, “param”]= 则配合 =ENTRYPOINT= 使用
+- =CMD=: 推荐使用 =CMD [“executable”, “param1”, “param2”…]= 这种格式， =CMD [“param”, “param”]= 则配合 =ENTRYPOINT= 使用
 - =EXPOSE=: Dockerfile 指定要公开的端口，使用 =docker run= 时指定映射到宿主机的端口即可
 - =ENV=: 为了使新的软件更容易运行，可以使用 =ENV= 更新 =PATH= 变量。如 =ENV PATH /usr/local/nginx/bin:$PATH= 确保 =CMD ["nginx"]= 即可运行
 

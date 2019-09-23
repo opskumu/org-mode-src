@@ -109,7 +109,7 @@ You'll find that the proportion of time is the same as the proportion of blkio w
 ➜  ~ docker run -it --rm --blkio-weight-device "/dev/sda:100" ubuntu-stress:latest /bin/bash
 #+END_SRC
 
-*** =--device-read-bps=、=--device-write-bps=
+*** =--device-read-bps= 、 =--device-write-bps=
 
 限制容器的写入速度是 1mb「 =<device-path>:<limit>[unit]= ，单位可以是 kb、mb、gb 正整数」:
 

@@ -434,7 +434,7 @@ spec:                               // 资源配置信息
 - *bgpPeer*
   - [[http://docs.projectcalico.org/v2.0/reference/private-cloud/l3-interconnect-fabric][Calico's documentation on L3 Topologies]]
 
-配置 Calico 集群节点，支持如下别名：=bgppeer= 、 =bgppeers= 、=bgpp= 、=bgpps= 、=bp= 、=bps=
+配置 Calico 集群节点，支持如下别名： =bgppeer= 、 =bgppeers= 、 =bgpp= 、 =bgpps= 、 =bp= 、 =bps=
 
 #+BEGIN_SRC
 apiVersion: v1
@@ -499,7 +499,7 @@ spec:
 
 - *IP Pool Resource(ipPool)*
 
-定义 Calico IP 地址资源池，除了 =ipPool= 还有以下别名：=ippool= 、 =ippools= 、 =ipp= 、 =ipps= 、 =pool= 、 =pools=
+定义 Calico IP 地址资源池，除了 =ipPool= 还有以下别名： =ippool= 、 =ippools= 、 =ipp= 、 =ipps= 、 =pool= 、 =pools=
 
 #+BEGIN_SRC
 apiVersion: v1
