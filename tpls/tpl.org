@@ -6,5 +6,3 @@
 #+STARTUP: showall
 #+STARTUP: showeverything
 #+OPTIONS: ^:nil
-#+ATTR_ORG: :width 500
-#+ATTR_HTML: :width 500
