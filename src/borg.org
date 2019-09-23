@@ -30,7 +30,7 @@ Borg 提供三个好处：
 
 ** The user persoective
 
-Borg 的面向用户为运行 Google 应用程序和服务的 Google 开发者和系统管理员（Google 内部称为网站高可用工程师或者简写 SRE）。用户向 Borg 以作业（=jobs=）的方式提交工作，每个 job 由包含着相同程序的一个或多个任务（ =tasks= ）组成。每个 job 运行在一个 Borg =cell= (一组机器集合管理单元) 上。
+Borg 的面向用户为运行 Google 应用程序和服务的 Google 开发者和系统管理员（Google 内部称为网站高可用工程师或者简写 SRE）。用户向 Borg 以作业（ =jobs= ）的方式提交工作，每个 job 由包含着相同程序的一个或多个任务（ =tasks= ）组成。每个 job 运行在一个 Borg =cell= (一组机器集合管理单元) 上。
 
 *** The workload
 

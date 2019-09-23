@@ -1,4 +1,7 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/org.css"/>
+#+HTML_HEAD: <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+#+HTML_HEAD: <script>var hlf=function(){Array.prototype.forEach.call(document.querySelectorAll("pre.src"),function(t){var e;e=t.getAttribute("class").toLowerCase(),e=e.replace(/src-(\w+)/,"src-$1 $1"),console.log(e),t.setAttribute("class",e),hljs.highlightBlock(t)})};addEventListener("DOMContentLoaded",hlf);</script>
+#+HTML_HEAD: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/googlecode.min.css" />
 #+AUTHOR: Kumu
 #+EMAIL: opskumu@gmail.com
 #+STARTUP: overview

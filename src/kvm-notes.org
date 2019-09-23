@@ -86,7 +86,7 @@ cache 不同模式工作原理图：
 
 [[./images/kvm-cache.png]]
 
-- =writethrough= 即直写模式，KVM cache 默认使用 =writethrough= ，它是在调用 write 写入数据的同时将数据写入磁盘缓存和后端块设备才返回，缺点是写入性能较低，但是安全性高。=qcow2= 格式在使用 =writethrough= 时性能很差
+- =writethrough= 即直写模式，KVM cache 默认使用 =writethrough= ，它是在调用 write 写入数据的同时将数据写入磁盘缓存和后端块设备才返回，缺点是写入性能较低，但是安全性高。 =qcow2= 格式在使用 =writethrough= 时性能很差
 - =writeback= 即回写模式，在调用 write 写入数据时只将数据写入到主机页缓存中即返回，写入性能高，有安全风险。当使用 =-snapshot= 选项的时候， =writeback= cache 是默认项
 - =none= 关闭缓存，直接从磁盘 IO 读写
 - =unsafe= 这个选项告诉 QEMU 不需要写入任何数据到磁盘，只要保证在缓存即可

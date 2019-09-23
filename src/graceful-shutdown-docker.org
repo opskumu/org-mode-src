@@ -50,9 +50,9 @@
 
 =CMD= 有三种格式：
 
-- =CMD ["executable","param1","param2"]=（exec 格式, 推荐使用这种格式）
+- =CMD ["executable","param1","param2"]= （exec 格式, 推荐使用这种格式）
 - =CMD ["param1","param2"]= （作为 =ENTRYPOINT= 指令参数）
-- =CMD command param1 param2= （shell 格式，默认 =/bin/sh -c=）
+- =CMD command param1 param2= （shell 格式，默认 =/bin/sh -c= ）
 
 =ENTRYPOINT= 有两种格式：
 

@@ -43,16 +43,5 @@
 #+END_QUOTE
 
 ** 小结
-   :PROPERTIES:
-   :CUSTOM_ID: 小结
-   :END:
 
-以上就是一个 HTTP 应用在 Kubernetes
-中完整涉及到的知识点，回到之前那张图，针对一个应用我们真正需要创建的就是
-Deployment、Service、Ingress。如果服务不对集群外的服务访问那么就只有
-Deployment 和 Service，ReplicaSet、Endpoint、Pod
-会自动创建，用户无需关心。其中，有一个重要的点，我们可以从图中看到，贯穿其中的一个重要的标记就是
-=app=test= 这个 label，Kubernetes 中 Deployment、Service 等资源都通过
-label 关联 Pod 标识。
-
---EOF--
+以上就是一个 HTTP 应用在 Kubernetes 中完整涉及到的知识点，回到之前那张图，针对一个应用我们真正需要创建的就是 Deployment、Service、Ingress。如果服务不对集群外的服务访问那么就只有 Deployment 和 Service，ReplicaSet、Endpoint、Pod 会自动创建，用户无需关心。其中，有一个重要的点，我们可以从图中看到，贯穿其中的一个重要的标记就是 =app=test= 这个 label，Kubernetes 中 Deployment、Service 等资源都通过 label 关联 Pod 标识。
