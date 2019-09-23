@@ -56,10 +56,10 @@ to an rsync daemon, and require SRC or DEST to start with a module name.
 - =-n= : 只测试输出而不正真执行命令，推荐使用，特别防止 =--delete= 误删除！
 - =--stats= : 输出文件传输的状态
 - =--progress= : 输出文件传输的进度
-- =––exclude=PATTERN= : 指定排除一个不需要传输的文件匹配模式
-- =––exclude-from=FILE= : 从 FILE 中读取排除规则
-- =––include=PATTERN= : 指定需要传输的文件匹配模式
-- =––include-from=FILE= : 从 FILE 中读取包含规则
+- =--exclude=PATTERN= : 指定排除一个不需要传输的文件匹配模式
+- =--exclude-from=FILE= : 从 FILE 中读取排除规则
+- =--include=PATTERN= : 指定需要传输的文件匹配模式
+- =--include-from=FILE= : 从 FILE 中读取包含规则
 - =--numeric-ids= : 不映射 uid/gid 到 user/group 的名字
 - =-S, --sparse= : 对稀疏文件进行特殊处理以节省 DST 的空间
 - =--delete= : 删除 DST 中 SRC 没有的文件，也就是所谓的镜像 [mirror] 备份
