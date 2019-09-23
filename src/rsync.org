@@ -41,13 +41,13 @@ to an rsync daemon, and require SRC or DEST to start with a module name.
 - =-v= : Verbose (try -vv for more detailed information) # 详细模式显示
 - =-e= "ssh options" : specify the ssh as remote shell # 指定 ssh 作为远程 shell
 - =-a= : archive mode # 归档模式，表示以递归方式传输文件，并保持所有文件属性，等于 -rlptgoD
-  - =-r=(--recursive) : 目录递归
-  - =-l=(--links) ：保留软链接
-  - =-p=(--perms) ：保留文件权限
-  - =-t=(--times) ：保留文件时间信息
-  - =-g=(--group) ：保留属组信息
-  - =-o=(--owner) ：保留文件属主信息
-  - =-D=(--devices) ：保留设备文件信息
+  - =-r= (--recursive) : 目录递归
+  - =-l= (--links) ：保留软链接
+  - =-p= (--perms) ：保留文件权限
+  - =-t= (--times) ：保留文件时间信息
+  - =-g= (--group) ：保留属组信息
+  - =-o= (--owner) ：保留文件属主信息
+  - =-D= (--devices) ：保留设备文件信息
 - =-z= : 压缩文件
 - =-h= : 以可读方式输出
 - =-H= : 复制硬链接
