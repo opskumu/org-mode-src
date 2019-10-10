@@ -2,7 +2,7 @@
 #+TITLE: 夏天的记忆 
 #+DATE: <2017-07-18 Tue>
 
-[[file:./images/hometown-river.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/hometown-river.png]]
 
 #+BEGIN_QUOTE
 我家门口的小河

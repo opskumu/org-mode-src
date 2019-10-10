@@ -51,7 +51,7 @@ CONTAINER           CPU %               MEM USAGE / LIMIT     MEM %             
 
 测试两个 container，一个设置为 3072，一个设置 1024，CPU 占用如下：
 
-[[./images/cpu-test.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/cpu-test.png]]
 
 *** CPU period constraint: =--cpu-period= & =--cpu-quota=
 

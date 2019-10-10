@@ -2,7 +2,7 @@
 #+TITLE: 坚持这件小事儿
 #+DATE: <2017-09-09 Sat>
 
-[[file:./images/si-chong-zou.jpg]] 
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/si-chong-zou.jpg]] 
 
 #+BEGIN_QUOTE
 日剧《四重奏》剧照

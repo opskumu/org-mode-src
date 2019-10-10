@@ -20,7 +20,7 @@
 
 [[https://developer.nvidia.com/cuda-downloads][CUDA Toolkit Download]] 官网下载，选择所对应的版本
 
-[[file:./images/cuda-download.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/cuda-download.png]]
 
 从上图中可以看到，官方也直接显示了 CUDA 的安装方式
 
@@ -86,7 +86,7 @@ Fri Jul 14 23:19:38 2017
 
 nvidia 官方提供了 nvidia-docker 可以直接驱动 GPU 设备，具体文档可以参考 [[https://github.com/NVIDIA/nvidia-docker][nvidia-docker]]，本文介绍原生的 Docker 方式。
 
-[[file:./images/docker-gpu.png]] > Example of how CUDA integrates with Docker
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/docker-gpu.png]] > Example of how CUDA integrates with Docker
 
 本文以 =tensorflow/tensorflow:latest-gpu= 测试：
 

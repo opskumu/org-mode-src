@@ -26,7 +26,7 @@ Borg 提供三个好处：
 2) 高可靠性和高可用性的操作，同时支持应用程序相关特性
 3) 有效的在数以万计的机器上运行工作负载
 
-[[./images/borg-arch.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-arch.png]]
 
 ** The user persoective
 
@@ -50,7 +50,7 @@ Borg cells 包括两种类型的 workload。第一种是那些长时间运行的
 
 每个 task 映射成一组 Linux 进程运行在一台机器的一个容器中。大部分的 Borg workload 都不是运行在虚拟机中，不想在虚拟化上花费精力是一方面。另外，设计 Borg 的时候还没有出现硬件虚拟化。task 也有拥有属性，例如资源需求等。大多数的 task 属性同它们的 job 一样，不过也可以被覆盖。如提供 task 专用的命令行参数，以及 CPU、内存、磁盘空间、磁盘 IO 大小、TCP 端口等都可以分配设置。用户通过 RPC 与 Borg 交互来操作 job，大多数是通过命令行工具完成的，其它的则通过监控系统。大部分 job 描述文件是用声明式配置语言 BCL (GCL 变体) 编写的。
 
-[[./images/borg-job-task-state.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-job-task-state.png]]
 
 用户可以修改一个运行中的 job 属性值并发布到 Borg，然后 Borg 按照新的 job 配置来更新 tasks。更新通常是以滚动方式完成，并且可以对更新导致的任务中断（重新调度或者抢占）的数量进行限制，任何导致更多中断的更改都会被跳过。
 
@@ -141,7 +141,7 @@ Borglet 是 cell 中每个主机上运行的本地 Borg agent。它负责启动�
 
 ** Availability
 
-[[./images/borg-evictions-per-task-week.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-evictions-per-task-week.png]]
 
 失败是大规模系统的常态：上图提供了 15 个样本 cells 中任务驱逐原因的细分。运行在 Borg 上的任务使用诸如复制、存储持久化状态在分布式文件系统中，以及（如果适用）偶尔检查点等技术来处理此类事件。即便如此，我们仍试图减轻这些事件的影响。例如，Borg：
 
@@ -175,7 +175,7 @@ Borg 的主要目标之一是有效利用 Google 的主机，这是一笔巨大�
 
 在生产中，我们故意让工作负载增长，偶尔的 "黑天鹅" 事件，负载峰值，主机故障，硬件升级以及大规模局部故障（如电源总线管道）。图 4 展示了我们应用 cell 压实，真实世界的 cells 会变小多少。
 
-[[./images/borg-compacted-size.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-compacted-size.png]]
 
 *** Cell sharing
 
@@ -183,11 +183,11 @@ Borg 的主要目标之一是有效利用 Google 的主机，这是一笔巨大�
 
 自从许多其他组织在独立的集群中运行面向用户和批处理 jobs，我们审查了如果我们做同样的事情会发生什么。图 5 显示，在中型的 cell 中，分离生产和非生产工作需要额外 20-30% 的主机来运行我们的工作负载。这是因为生产 jobs 通常会预留资源来处理罕见的工作负载峰值，但大多数时候都不使用这些资源。Borg 回收未使用的资源来运行大部分非生产的工作，因此我们可以需要更少的机器。
 
-[[./images/borg-prod-noprod-different-cells.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-prod-noprod-different-cells.png]]
 
 大多数 Borg cells 由数千个用户共享。图 6 展示了原因。对于这些测试，针对需要至少 10TiB 的内存（或 100TiB）的用户，我们将用户的工作负载分成新的 cell。我们现有的政策看起来很好：即使门槛较大，我们也需要 2-16 倍的 cells，以及 20-150% 的额外机器。再次强调，汇集资源可以显著降低成本。
 
-[[./images/borg-user-different-cells.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-user-different-cells.png]]
 
 但是，将不相关的用户和 job 类型打包到同一台主机会导致 CPU 竞争，因此我们需要更多的机器来补偿？为了评估这一点，我们研究了在具有相同时钟速度的相同机器类型下运行不同环境中的 CPI（每条指令的周期）如何变化。在这些条件下，CPI 值具有可比性，可用作性能干扰的一个代理，因为 CPI 加倍会使 CPU 绑定程序的运行时间加倍。数据是一周内从大约 12000 个随机选择的生产 tasks 中收集的，使用 [83] 中描述的硬件配置基础设施计算 5 分钟间隔内的周期和指令，并对样本进行加权，以便每秒计算 CPU 时间。结果并不明确。
 
@@ -205,17 +205,17 @@ Borg 的主要目标之一是有效利用 Google 的主机，这是一笔巨大�
 
 Google 构建了大型 cells，既允许运行大型计算，又可以减少资源碎片。我们通过在多个较小的 cells 中划分 cell 的工作负载来测试后者的影响 - 首先随机置换 jobs 并在分区间以循环方式分配它们。图 7 证实使用较小的 cells 需要更多的机器。
 
-[[./images/borg-small-cells-more-machines.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-small-cells-more-machines.png]]
 
 *** Fine-grained resource requests
 
 Borg 用户以 ms（毫秒）为单位请求 CPU，以 bytes（字节）为单位请求内存和磁盘空间。（核心是处理器超线程，针对机器类型的性能进行了标准化）图 8 显示了它们利用了这种粒度：请求的内存或 CPU 内核数量中几乎没有明显的 "甜点"，并且在这些资源间几乎没有明显的相关性。这些分布与[68] 中的分布非常相似，除了我们看到 90% ile 以及以上的内存请求略大。
 
-[[./images/borg-cdf-cpu-memory.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-cdf-cpu-memory.png]]
 
 提供一组固定大小的容器或者虚拟机，虽然在 IaaS（基础设施即服务）提供商中很常见，但并不能很好的满足我们的需求。为了证明这一点，我们通过将它们四舍五入到每个资源维度中的下一个最接近 2 的幂来 "分配" 生产作业和分配的 CPU 和内存资源限制，从 CPU 的 0.5core 到内存的 1GiB 开始。图 9 显示，这样做在中位数情况下需要额外 30%~50% 的资源。上限来自在将原始 cell 翻两番之后压缩开始之前将整个机器分配给大型 tasks 并不适合；允许这些 tasks 进入 pending 的下限。（这比 [37] 报告的要少大约 100%，因为我们支持 4 buckets 并允许 CPU 和内存容量独立扩展）
 
-[[./images/borg-cdf-add-overheads.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-cdf-add-overheads.png]]
 
 *** Resource reclamation
 
@@ -229,15 +229,15 @@ Borg 调度程序使用限制来计算生产 tasks 可行性，因此它们从�
 
 图 10 显示了在没有资源回收的情况下需要更多的机器。大约 20% 的 workload 在中位数单元格中的回收资源中运行。
 
-[[./images/borg-cdf-additional-machines.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-cdf-additional-machines.png]]
 
 我们可以从图 11 中看到更多的细节，其中显示了预留和使用与限制的比率。超出其内存限制的 task 将是第一个在需要资源时被抢占的 task，无论其优先级如何，因此在 tasks 超出其内存资源限制的情况下比较少见。另一方面，CPU 可以很容易地被限制，因此短期峰值可以相当无害地推动使用超出预留。
 
-[[./images/borg-cdf-ratio-cpu-mem.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-cdf-ratio-cpu-mem.png]]
 
 图 12 显示了发生的事情。预留显然更接近于第二周的使用情况，而在第三周则有所不同，基线周（第 1 周和第 4 周）显示最大差距。正如预期的那样，内存 OOM 事件的发生率在第 2 周和第 3 周略有增加。在审查这些结果后，我们认为净增益超过了下行趋势，并将中等资源回收参数部署到其它 cells。
 
-[[./images/borg-oom-events.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-oom-events.png]]
 
 ** Isolation
 
@@ -266,7 +266,7 @@ Borglet 中的用户空间控制循环将内存分配给容器根据预测的未
 
 和 Leverich [56] 一样，我们发现标准 Linux CPU 调度器（CFS）需要进行大量调整以支持低延迟和高利用率。为了减少调度延迟，我们的 CFS 版本使用扩展的每个 cgroup 加载历史记录 [16]，允许通过 LS tasks 抢占批处理 tasks，并在多个 LS tasks 可在 CPU 上运行时减少调度量。幸运的是，我们的许多应用程序都使用 thread-per-request 模型，这可以减轻持续负载不平衡的影响。我们谨慎使用 cpusets 将 CPU 内核分配给具有特别严格的延迟要求的应用程序。这些努力的一些结果如图 13 所示。该领域的工作仍在继续，增加线程布局和 CPU 管理，即 NUMA，超线程和功耗感知（例如，[81]），并提高控制保真度 Borglet。
 
-[[./images/borg-cpu-util.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/borg-cpu-util.png]]
 
 允许 tasks 消耗资源达到其限制。它们中的大多数被允许超出 CPU 等可压缩资源的范围，以利用未使用的（slack）资源。只有 5% 的 LS tasks 会禁用此功能，可能是为了获得更好的可预测性；不到 1% 的批处理 tasks 这样做。默认情况下禁用使用 slack 内存，因为它会增加 tasks 被杀的可能性，但即便如此，10% 的 LS tasks 会这样做，79% 的批处理 tasks 会这样做，因为它是 MapReduce 框架的默认设置。这补充了 reclaimed 资源的结果。批处理 tasks 愿意机会性的利用未使用的以及 reclaimed 的内存：大多数时候这是有效的，尽管当 LS tasks 急需资源时偶尔会牺牲批处理 tasks。
 

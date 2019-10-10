@@ -2,7 +2,7 @@
 #+TITLE: 我所能想到的一些事情
 #+DATE: <2015-12-09 Wed>
 
-[[./images/zhuanshan.jpg]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/zhuanshan.jpg]]
 
 -----
 

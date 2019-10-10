@@ -15,7 +15,7 @@
 
 -----
 
-[[file:./images/shanghai.jpg]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/shanghai.jpg]]
 
 #+BEGIN_QUOTE
 去年的这一天，离开老东家，离开上海时拍的，来杭州一周年了

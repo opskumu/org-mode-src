@@ -11,7 +11,7 @@ Docker 两个主要部件：
 
 Docker 使用客户端-服务器 (C/S) 架构模式。Docker 客户端会与 Docker 守护进程进行通信。Docker 守护进程会处理复杂繁重的任务，例如建立、运行、发布你的 Docker 容器。Docker 客户端和守护进程可以运行在同一个系统上，当然你也可以使用 Docker 客户端去连接一个远程的 Docker 守护进程。Docker 客户端和守护进程之间通过 socket 或者 RESTful API 进行通信。
 
-[[./images/docker_arch.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/docker_arch.png]]
 
 *** Docker 守护进程
 
@@ -46,7 +46,7 @@ Docker 容器和文件夹很类似，一个Docker容器包含了所有的某个�
 Docker 从 0.9 版本开始使用 libcontainer 替代 lxc，libcontainer 和 Linux
 系统的交互图如下：
 
-[[./images/libcontainer-linux.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/libcontainer-linux.png]]
 
 - 图片来源: [[http://blog.docker.com/2014/03/docker-0-9-introducing-execution-drivers-and-libcontainer/][Docker 0.9: introducing execution drivers and libcontainer]]
 
@@ -627,7 +627,7 @@ $ sudo docker run -p 127.0.0.1:53:5353/udp <image> <cmd>
 
 ** Docker 网络配置
 
-[[./images/docker_networking.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/docker_networking.png]]
 
 图: [[http://www.slideshare.net/janghoonsim/docker-container-and-lightweight-virtualization][Docker - container and lightweight virtualization]]
 
@@ -669,7 +669,7 @@ docker run 创建 Docker 容器时，可以用 =--net= 选项指定容器的网�
 
 **** bridge模式
 
-[[./images/vethbridge.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/vethbridge.png]]
 
 图：[[http://www.wickedawesometech.us/2014/07/the-container-world-part-2-networking.html][The Container World Part 2 Networking]]
 
@@ -800,7 +800,7 @@ $ sudo systemctl start docker
 
 **** pipework
 
-[[./images/docker_bridge.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/docker_bridge.png]]
 
 不同容器之间的通信可以借助于 pipework 这个工具给 docker 容器新建虚拟网卡并绑定 IP 桥接到 br0
 
@@ -1398,7 +1398,7 @@ $ sudo docker run -t -i -d --volumes-from test --name test2 ubuntu:14.04 /bin/ba
 $ sudo docker run -t -i -d --volumes-from test1 --name test3 ubuntu:14.04 /bin/bash
 #+END_SRC
 
-[[./images/docker_data.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/docker_data.png]]
 
 *** 备份、恢复或迁移数据卷
 

@@ -2,7 +2,7 @@
 #+TITLE: 马上毕业了，还能做些什么
 #+DATE: <2016-03-16 Wed> 
 
-[[./images/whiplash.jpg]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/whiplash.jpg]]
 
 -----
 

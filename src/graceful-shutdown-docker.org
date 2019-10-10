@@ -38,7 +38,7 @@
 
 程序可以针对信号捕捉，然后执行相应函数：
 
-[[./images/signal.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/signal.png]]
 
 #+BEGIN_QUOTE
 以上知识大部分都来自 《Linux/UNIX 系统编程手册》，想要了解更多的，可以查看该书上册的 20、21、22 章节。

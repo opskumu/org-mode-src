@@ -2,7 +2,7 @@
 #+TITLE: 小镇青年
 #+DATE: <2017-06-25 Sun>
 
-[[file:./images/sparks.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/sparks.png]]
 
 #+BEGIN_QUOTE
 日剧《火花》剧照

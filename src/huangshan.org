@@ -2,7 +2,7 @@
 #+TITLE: 黄山行
 #+DATE: <2017-06-14 Wed>
 
-[[file:./images/huangshan.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/huangshan.png]]
 
 -----
 

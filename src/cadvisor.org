@@ -2,7 +2,7 @@
 #+TITLE: cAdvisor 容器数据采集 
 #+DATE: <2015-11-04 Wed>
 
-[[./images/cAdvisor.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/cAdvisor.png]]
 
 -----
 

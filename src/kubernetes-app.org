@@ -6,7 +6,7 @@
 
 本文单纯从使用者的角度来说，从一个 HTTP 应用在 Kubernetes 运行涉及到的理念讲起，先来看下面这张图：
 
-[[./images/kubernetes-app.png]]
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/kubernetes-app.png]]
 
 ** Namespace（空间）
 
