@@ -87,7 +87,7 @@ activation {
 
 *** 示例
 
-主机先添加一块设备，本例设备名为 =/dev/vdc=，添加 =docker-storage-setup= 配置文件：
+主机先添加一块设备，本例设备名为 =/dev/vdc= ，添加 =docker-storage-setup= 配置文件：
 
 #+BEGIN_SRC
 # systemctl stop docker # 停止当前运行的 docker

@@ -98,7 +98,7 @@ mysql>
 
 *** 修复 Slave
 
-因为主修改了环境变量和表的 =row_format=，修复了 Master 的数据回写问题，但是 Slave 这边没有更改，导致 Slave 同步出错，卡在了插入语句的地方，导致主从同步失败，修复如下：
+因为主修改了环境变量和表的 =row_format= ，修复了 Master 的数据回写问题，但是 Slave 这边没有更改，导致 Slave 同步出错，卡在了插入语句的地方，导致主从同步失败，修复如下：
 
 1. msyql> stop slave;
 2. 修改 slave ~innodb_file_format=BARRACUDA~ 「并添加该值到 my.cnf」和表 ~row_format=dynamic~

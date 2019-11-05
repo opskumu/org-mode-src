@@ -1497,7 +1497,7 @@ $ sudo docker inspect -f "{% raw %}{{ .HostConfig.Links }}{% endraw %}" web
 [/db:/web/db]
 #+END_SRC
 
-可以看到 web 容器被链接到 db 容器为 =/web/db=，这允许 web 容器访问 db 容器的信息。
+可以看到 web 容器被链接到 db 容器为 =/web/db= ，这允许 web 容器访问 db 容器的信息。
 
 容器之间的链接实际做了什么？一个链接允许一个源容器提供信息访问给一个接收容器。在本例中，web 容器作为一个接收者，允许访问源容器 db 的相关服务信息。Docker 创建了一个安全隧道而不需要对外公开任何端口给外部容器，因此不需要在创建容器的时候添加 =-p= 或 =-P= 指定对外公开的端口，这也是链接容器的最大好处，本例为 PostgreSQL 数据库。
 

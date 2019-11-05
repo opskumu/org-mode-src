@@ -179,7 +179,7 @@ data:
 # kubectl replace -f default-tcp-configmap.yaml --namespace=kube-system
 #+END_SRC
 
-以上表示暴露 =default= namespace 下服务名为 =redis=，端口为 =6379= 的服务到 =nginx-ingress-lb= 所在节点的 =9000= 端口。
+以上表示暴露 =default= namespace 下服务名为 =redis= ，端口为 =6379= 的服务到 =nginx-ingress-lb= 所在节点的 =9000= 端口。
 
 更新 configmap 之后通过 =<任何一个节点IP>:9000= 即可访问集群内部的 =redis= 服务
 
