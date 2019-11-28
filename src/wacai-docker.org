@@ -4,7 +4,7 @@
 
 其实年初的时候就有想过写这篇文章了，不过一拖就拖到了现在，再拖下去就有点说不过去了。
 
-挖财内部对容器化项目的代号为 =K2= （乔戈里峰），乔戈里峰是世界第二高峰，寓意是富有挑战，但勇攀高峰。项目从 2016 年 11 月到现在已经有三年的时间了，如今挖财内部测试环境早已全部 Docker 容器化，而线上环境也运行着重要的业务。经历从零到一的整个落地过程，回顾下来，这座高峰算是拿下了。再看 K8s 技术本身现在也是遍地开花，早已赢得容器编排的战争，剩下来就是各个企业的落地实践。倒是 Docker 公司最近的境遇，这个创建 Docker 的企业沦落如此，多少有点令人唏嘘，唯有 Respect。
+挖财内部对容器化项目的代号为 =K2= （乔戈里峰），乔戈里峰是世界第二高峰，但攀登极富挑战，寓意就是面对挑战，勇攀高峰 ；）。项目从 2016 年 11 月到现在已经有三年的时间了，如今挖财内部测试环境早已全部 Docker 容器化，而线上环境也运行着重要的业务。经历从零到一的整个落地过程，回顾下来，这座高峰算是拿下了。再看 K8s 技术本身现在也是遍地开花，早已赢得容器编排的战争，剩下来就是各个企业的落地实践。倒是 Docker 公司最近的境遇，这个创建 Docker 的企业沦落如此，多少有点令人唏嘘，唯有 Respect。
 
 ** 时间线 
 
@@ -27,6 +27,10 @@
 *** 测试环境
 
 当前测试环境有一个 K8s 集群（K8s 1.11.x），空间（ =namespace= ）总数有 500+，应用数（ =Deployment= + =StatefulSet= ） 4400+，实例数（ =Pod= ） 4000+（因为测试环境大部分应用都只有 1 个或 0 个副本，因此实例数少于应用数）。
+
+#+BEGIN_QUOTE
+题外话，话说 K8s 升级的历程也相当血泪，早期的配置变更，向下的兼容性等等，关于升级相关可以参见之前的文章 [[https://blog.opskumu.com/kubernetes-upgrade-notes.html][Kubernetes 版本升级标注]]
+#+END_QUOTE
 
 *** 线上环境
 
@@ -109,6 +113,8 @@
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-Kubernetes-arch.png]]
 
 为了安全性，K8s 集群启用了 TLS 和 RBAC 部署，使用 Nginx 和 Keepalived 作为 kube-apiserver 的 HA 组件，ingress-nginx controller 也是使用类似的方案做了高可用。关于 K8s 集群部署业界也提供了诸如 [[https://github.com/kubernetes/kubeadm][kubeadm]] 和 [[https://github.com/kubernetes-sigs/kubespray][kubespray]] 的部署方案，我们内部则是定制了一套 K8s Ansible Playbook，集群组件使用的是二进制安装，Systemd 管理，最大化保持可控。
+
+** TODO 内部推广
 
 ** TODO 趟过的坑
 
