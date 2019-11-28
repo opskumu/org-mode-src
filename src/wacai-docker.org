@@ -1,0 +1,122 @@
+#+SETUPFILE: ../tpls/tpl.org
+#+TITLE: 挖财容器化之路
+#+DATE: <2019-11-26 Tue>
+
+其实年初的时候就有想过写这篇文章了，不过一拖就拖到了现在，再拖下去就有点说不过去了。
+
+挖财内部对容器化项目的代号为 =K2= （乔戈里峰），乔戈里峰是世界第二高峰，寓意是富有挑战，但勇攀高峰。项目从 2016 年 11 月到现在已经有三年的时间了，如今挖财内部测试环境早已全部 Docker 容器化，而线上环境也运行着重要的业务。经历从零到一的整个落地过程，回顾下来，这座高峰算是拿下了。再看 K8s 技术本身现在也是遍地开花，早已赢得容器编排的战争，剩下来就是各个企业的落地实践。倒是 Docker 公司最近的境遇，这个创建 Docker 的企业沦落如此，多少有点令人唏嘘，唯有 Respect。
+
+** 时间线 
+
+看了一下项目提交的 Git 记录，第一次提交时间是 <2016-11-01 Tue>。
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-first-commit.png]]
+
+- 2016 年 11 月初开启 
+- 2017 年 1 月底 V1.0 上线
+- 2017 年 6 月底测试环境全面推开
+- 2017 年 7 月线上机器学习环境线上试点
+- 2017 年 10 月线上业务试点 
+- 2018 年 7 月 V2.0 版本
+- 2018 年 9 月挖财云版本（整合运维监控、告警、日志和容器系统）
+- 2018 年 12 月支持多集群管理
+- 2019 年 6 月私有化分支版本上线
+
+** 现状
+
+*** 测试环境
+
+当前测试环境有一个 K8s 集群（K8s 1.11.x），空间（ =namespace= ）总数有 500+，应用数（ =Deployment= + =StatefulSet= ） 4400+，实例数（ =Pod= ） 4000+（因为测试环境大部分应用都只有 1 个或 0 个副本，因此实例数少于应用数）。
+
+*** 线上环境
+
+线上环境有三个集群，一个机器学习集群（K8s 1.7.x），一个私有云集群（K8s 1.13.x），有个主体业务集群（K8s 1.13.x），粗率统计了一下，空间数 50+，应用数 500+，实例数 1000+。
+
+-----
+
+测试环境 + 线上环境总体运行有 5000+ 的 Pod 数，这个数量已经持续了很长一段时间。大概 2018 年底的时候就是这个数据，之后因为业务的调整等等原因，数量级没有一个大的增幅。
+
+** 技术选型
+
+*** 原生方案 or 自研
+
+对于是否使用原生方案，我们没有过多的犹豫，确定基于 K8s API 上层封装抽象，其它底层最大化使用原生方案。首先 K8s 肯定不会维护一个内部版本，对于一个快速迭代的项目，人力是一方面，后续的可维护性也是个大问题，而基于上层 API 的抽象和封装可以带来最大的灵活和便利性。针对客户端工具，内部有人建议开发命令行工具，摒弃 Dashboard。但是基于以往的经验，命令行工具的维护性以及用户上手成本相比 Dashboard 要更高。就拿 Docker 来说，虽然很火，但是实际能够熟练书写 Dockerfile 构建 Docker 镜像的开发、测试并不多，放到 2019 年来说这个比例依然不高。对于大部分用户 Dashboard 可以最大的简化上手难度，推广和维护性来说也更方便。
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-kubernetes.png]]
+
+底层 K8s，中间层为 K2，对外暴露则是 Dashboard 和 K2 API。对于大部分用户使用 Dashboard 即可满足需求，如果有 API 的需求也提供相关渠道。K2 使用 Go 编写，针对 Namespace、Service、Deployment、StatefulSet、Ingress、Job、ConfigMap 有自身的封装抽象，屏蔽这些原生理念给用户带来的困惑，尽可能的降低用户理解难度。K2 Dashboard 则使用 [[https://github.com/ant-design/ant-design-pro][Ant Design Pro]] 编写，好吧，不自觉的想到了之前 Ant Design 的圣诞彩蛋事件，当然这并不妨碍它的易用性。以下为平台的部分截图：
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-ns-dashboard.png]]
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-app-dashboard.png]]
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-app-view-dashboard.png]]
+
+我们内部最开始使用的 K8s 版本为 1.3.x，早期 K8s 这块的用户和权限管理并不完善（后续的 RBAC 机制个人认为也很繁琐）。我们自行在 K2 上实现了一套用户和权限管理机制，权限只在空间层，应用层权限受限于空间角色（在某些场景空间层权限并不能满足需求，我们内部的另外一个版本是细化到应用层的）。测试环境和生产环境功能性是有细微差别的，比如测试环境所有的资源都是自助式的，而生产环境保持尽可能的自助化条件下，又引入了一些资源申请机制（如生产环境空间需要走审批流程）。测试环境的空间还引入了生命周期机制，在有效期内用户可以续期（续期有上限），如果过期则会自动销毁，提升资源利用率，生产环境则没有有效期一说。因为业务的特殊性，CPU 资源利用率是非常低的，因此我们测试环境节点和生产环境节点 CPU 都是超配的（limits 和 requests 控制），为了稳定性生产环境内存是没有超配的，但是测试环境为了提升资源利用率内存也是 2 倍超配的。测试环境提供了 Web 终端工具，方便用户登录容器，而生产环境一是为了安全性而是为了审计没有提供 Web 终端工具。我们在堡垒机上提供了 =k2ctl= 命令行工具方便用户登录线上容器， =k2ctl= 集成了 K2 的权限控制，原理也很简单，底层封装 =kubectl= 。等等，以上只是列举了一部分测试环境和生产环境功能性不同，简单来说在实际场景下，测试环境的自由度要更高，功能性也更多，而生产环境则是安全和稳定性排在首位，其它的细节这里就不过多介绍了。
+
+*** 镜像构建
+
+- [[https://jenkins.io][Jenkins]] + [[https://github.com/jenkinsci/kubernetes-plugin][Kubernetes Plugin]] + [[https://goharbor.io/][Harbor]]
+
+早在 2015 年中的时候公司内部就推行微服务化了，后端统一使用 [[https://spring.io/projects/spring-boot][Spring Boot]] + [[https://dubbo.apache.org/][Dubbo]] 的技术栈，前端则是 [[https://github.com/facebook/react][React]] + [[https://nodejs.org/][Node.js]] 的技术栈。因为技术栈比较统一的原因，所以比较好做标准化。结合内部的打包平台（内部代号 =Obelisk= ）构建通用 Dockerfile 模板，在实际构建的过程中动态修改 Dockerfile 并生成镜像，然后 Push 到镜像中心 Harbor。
+
+镜像构建使用的技术中还提到了 [[https://github.com/jenkinsci/kubernetes-plugin][Kubernetes Plugin]] ，在没有使用 Docker 之前，Jenkins Slave 都是使用的虚拟机运行构建软件包的。之后在内部构建了 K8s 集群，然后相应的 Jenkins Slave 则通过 [[https://github.com/jenkinsci/kubernetes-plugin][Kubernetes Plugin]] （因内部需求，内部修改 K8s Plugin 源码以支持 HostNetwork 网络）动态生成，如此可以尽可能的保证打包环境的纯净性。其中 Jenkins Slave 镜像是使用 [[https://github.com/jenkinsci/docker-jnlp-slave][docker-jnlp-slave]] 定制的，集成了构建相关的环境，如 Java、Maven、npm 等工具。
+
+当然除了 Spring Boot 和 Node.js 应用，公司还是有一些使用其它技术栈的项目，如 Python、Go 以及 Tomcat War 包等项目。对于这类比较少的项目，构建方式是在相关项目代码库中加入 Dockerfile，构建的时候通过指定的 Dockerfile 构建镜像，以满足业务需求。
+
+*** 网络
+
+- [[https://www.projectcalico.org/][Calico]] BGP 大三层网络方案
+
+在内部平台最早构建的时候，使用的网络方案为 [[https://github.com/coreos/flannel][Flannel]] VXLAN 模式，但是测试过程中发现很多的不便利性。基于 Overlay 的性能问题是一方面，对于测试环境，很多时候都有直连 Pod Debug 的需求。还有早期的时候虚拟机和容器环境是并存的，基于 Dubbo 的服务注册发现的网络访问也是一个问题。再者数据库这些应用都是部署在集群外部的，Overlay 网络访问外部数据库都走 NAT，在数据库端追踪源 IP 的时候不便于定位实际服务。最后，决定采用 [[https://www.projectcalico.org/][Calico]] BGP 大三层网络方案，通过内部交换机打通容器和实际网络，如此以上说的问题自然就解决了。Calico 网络性能接近裸机网络，下图是早期的一个测试结果：
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/calico-network-test-1.png]]
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/calico-network-test-2.png]]
+
+当然，实际使用什么网络方案还要看你自己的应用场景，我们机器学习平台（当前主要运行分布式 Jupyter）使用的网络方案则是基于 [[https://github.com/coreos/flannel][Flannel]] VXLAN 来做的，原因是没有测试环境描述的这些需求，[[https://github.com/coreos/flannel][Flannel]] 方案本身够简单。
+
+*** 日志
+
+- EFK（[[https://github.com/elastic/elasticsearch][Elasticsearch]] + [[https://github.com/elastic/beats][Filebeat]] + [[https://github.com/elastic/kibana][Kibana]]）
+
+日志方案使用业界比较成熟的 EFK 方案，关于 EFK 本身这里不过多解释。这里主要介绍的是如何通过 EFK 收集到容器的业务日志，我们的服务主要是 Java 相关的，大部分日志都是输出到本地文件的，除了业务日志还有一些应用访问日志、中间件组件日志以及监控日志等。如果统一都输出到标准输出的话，虽然可以通过配置实现，但是可读性却不是很好。最后采用的方案是，兼容现有的方案，自动挂载本地日志卷到容器，虚拟机中存储在什么地方就存储在什么地方。
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-log-volume.png]]
+
+如图所示，定义宿主目录 =/log-dir/k2-logs/<namespace>/<appName>= ， =/log-dir/k2-logs/= 是自定义存储容器日志的根目录，实际挂载的时候以空间名和应用名隔离目录。其中本地卷挂载到容器的目录为 =/log-dir/k2-logs= ，和宿主相同，服务在启动的时候脚本自动创建 =/log-dir/k2-logs/<podHash>= 目录并软链接到应用实际输出日志的目录 =/log-dir/logs= ，这样即使多个副本在同一个宿主也不会出现占用同一个目录日志文件的问题（坏处是需要修改启动脚本映射日志目录，但是因为 CI 标准化，这块成本基本没有）。如此，Filebeat 只要设置对应的规则收集日志即可，和传统虚拟机方式基本无差。如果日志输出标准化做的不好，日志目录不统一，也可以让用户自定义容器挂载目录，但为了避免滥用，内部这块是没有暴露这个功能的。
+
+以上是针对日志文件落盘的解决方案，对于一些开源的服务或者日志只输出到标准输出的服务则需要另外考虑。实际上我们内部对于服务日志落盘到文件的同时，服务日志也会打一份到标准输出，主要辅助用户排查问题，提供基本的 =tail -f= 的功能。如果我们针对标准输出和落盘日志文件统一都收集的话肯定会导致重复收集，因此我们对标准输出又提供了额外的方式收集。
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-stdout-log.png]]
+
+针对标准输出收集我们的方案如上图所示，利用 Filebeat 配置动态加载的功能，生成和分发 Filebeat 配置，达到标准输出日志收集的目的。默认标准输出日志收集是关闭的，用户可以在应用界面自主开启收集。
+
+*** 监控告警
+
+- [[https://github.com/grafana/grafana][Grafana]] + [[https://github.com/kubernetes/kube-state-metrics][kube-state-metrics]] + [[https://github.com/prometheus][Prometheus]] + K8s eventer（基于 K8s 事件告警，自研） + Alarmd（内部告警服务，自研）
+
+监控数据展示使用 Grafana，K8s 数据收集使用 kube-state-metrics，存储则使用 Prometheus。告警这块因为内部有自研的服务，因此直接对接内部服务。系统级别的告警利用 Prometheus 的数据，应用状态相关则是自研的 K8s eventer 对接自研告警服务。K8s eventer 主要借鉴了 heapster 的 eventer 组件，功能除了监听 K8s 事件，还会上报一些事件如容器 OOM 事件到 K8s，还做了一些筛选和收敛工作，以达到减少误报的目的。早期我们针对 K8s 的事件还会暴露给 Prometheus，后来我们有自己的事件中心平台，相关的事件直接 push 到内部事件中心，便于后续展示和分析。
+
+#+BEGIN_QUOTE
+最近看到阿里云也开源了类似我们内部 K8s eventer 的工具 [[https://github.com/AliyunContainerService/kube-eventer][AliyunContainerService/kube-eventer]] ，有需要的可以调研一下。针对告警，如果使用开源的，你也可以尝试下 [[https://github.com/prometheus/alertmanager][Prometheus alertmanager]] 。
+#+END_QUOTE
+
+*** 其它
+
+针对完整的组件和架构方案，可以具体看下图：
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-Kubernetes-arch.png]]
+
+为了安全性，K8s 集群启用了 TLS 和 RBAC 部署，使用 Nginx 和 Keepalived 作为 kube-apiserver 的 HA 组件，ingress-nginx controller 也是使用类似的方案做了高可用。关于 K8s 集群部署业界也提供了诸如 [[https://github.com/kubernetes/kubeadm][kubeadm]] 和 [[https://github.com/kubernetes-sigs/kubespray][kubespray]] 的部署方案，我们内部则是定制了一套 K8s Ansible Playbook，集群组件使用的是二进制安装，Systemd 管理，最大化保持可控。
+
+** TODO 趟过的坑
+
+- [[https://github.com/opskumu/issues/issues/19][2018 遇到的问题集锦]]
+- [[https://github.com/opskumu/issues/issues/23][2019 遇到的问题集锦]]
+
+以上是这两年遇到的一些关于 K8s 问题的碎片化记录，大部分的问题都记录了。
+
+** TODO 一些感想 
+
+** TODO 未来的路
