@@ -197,7 +197,7 @@ The better metric is container_memory_working_set_bytes as this is what the OOM 
 
 *** 关于基于容器的云原生应用设计原则
 
-关于应用在容器中运行要注入的一些原则，国外有人已经总结的相当好了，并且还出版了一本书 [[https://www.redhat.com/cms/managed-files/cm-oreilly-kubernetes-patterns-ebook-f19824-201910-en.pdf][《Kubernetes Patterns: Reusable Elements for Designing Cloud-Native Applications》]] 。点击书籍链接可以直接下载，红帽已经将其开源，没有版权问题。以下直接翻译摘录一部分内容：
+关于应用在容器中运行要注意的一些原则，国外有人已经总结的相当好了，并且还出版了一本书 [[https://www.redhat.com/cms/managed-files/cm-oreilly-kubernetes-patterns-ebook-f19824-201910-en.pdf][《Kubernetes Patterns: Reusable Elements for Designing Cloud-Native Applications》]] 。点击书籍链接可以直接下载，红帽已经将其开源，没有版权问题。以下直接翻译摘录一部分内容：
 
 #+BEGIN_QUOTE
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/cloud-native-container-design-principles.png]]
