@@ -6,7 +6,7 @@
 
 *** 2019
 
-- 2019-11-26 [[file:wacai-docker.org][挖财容器化之路]]
+- 2019-11-26 [[file:wacai-docker.org][挖财 Kubernetes 容器化之路]]
 - 2019-10-10 [[file:xinjiang-2019.org][北疆秋色]]
 - 2019-06-04 [[file:kubernetes-app.org][一个 HTTP 应用在 Kubernetes 的运行形式]]
 - 2019-02-11 [[file:nian.org][过年期间]]

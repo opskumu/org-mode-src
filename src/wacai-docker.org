@@ -1,5 +1,5 @@
 #+SETUPFILE: ../tpls/tpl.org
-#+TITLE: 挖财容器化之路
+#+TITLE: 挖财 Kubernetes 容器化之路
 #+DATE: <2019-11-26 Tue>
 
 其实年初的时候就有想过写这篇文章了，不过一拖就拖到了现在，再拖下去就有点说不过去了。
@@ -26,7 +26,7 @@
 
 *** 测试环境
 
-当前测试环境有一个 K8s 集群（K8s 1.11.x），空间（ =namespace= ）总数有 500+，应用数（ =Deployment= + =StatefulSet= ） 4400+，实例数（ =Pod= ） 4000+（因为测试环境大部分应用都只有 1 个或 0 个副本，因此实例数少于应用数）。
+当前测试环境有一个 K8s 集群（K8s 1.11.x），空间（ =namespace= ）总数有 500+，应用数（ =Deployment= + =StatefulSet= ） 4400+，实例数（ =Pod= ） 4000+（因为测试环境大部分应用都只有 1 个，有些是处于暂停状态，即 0 个副本，因此实例数少于应用数）。
 
 #+BEGIN_QUOTE
 题外话，话说 K8s 升级的历程也相当血泪，早期的配置变更，向下的兼容性等等，关于升级相关可以参见之前的文章 [[https://blog.opskumu.com/kubernetes-upgrade-notes.html][Kubernetes 版本升级标注]]
@@ -67,6 +67,8 @@
 镜像构建使用的技术中还提到了 [[https://github.com/jenkinsci/kubernetes-plugin][Kubernetes Plugin]] ，在没有使用 Docker 之前，Jenkins Slave 都是使用的虚拟机运行构建软件包的。之后在内部构建了 K8s 集群，然后相应的 Jenkins Slave 则通过 [[https://github.com/jenkinsci/kubernetes-plugin][Kubernetes Plugin]] （因内部需求，内部修改 K8s Plugin 源码以支持 HostNetwork 网络）动态生成，如此可以尽可能的保证打包环境的纯净性。其中 Jenkins Slave 镜像是使用 [[https://github.com/jenkinsci/docker-jnlp-slave][docker-jnlp-slave]] 定制的，集成了构建相关的环境，如 Java、Maven、npm 等工具。
 
 当然除了 Spring Boot 和 Node.js 应用，公司还是有一些使用其它技术栈的项目，如 Python、Go 以及 Tomcat War 包等项目。对于这类比较少的项目，构建方式是在相关项目代码库中加入 Dockerfile，构建的时候通过指定的 Dockerfile 构建镜像，以满足业务需求。
+
+当前内部 Harbor 使用的版本是 =1.5.x= ，针对 Harbor 镜像的清理这里需要提一下，我们定制了清理脚本，通过自定义保留版本数定期清理过期镜像 Tag，然后选择合适的时间进行镜像 GC 操作。
 
 *** 网络
 
@@ -113,6 +115,8 @@
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/k2-Kubernetes-arch.png]]
 
 为了安全性，K8s 集群启用了 TLS 和 RBAC 部署，使用 Nginx 和 Keepalived 作为 kube-apiserver 的 HA 组件，ingress-nginx controller 也是使用类似的方案做了高可用。关于 K8s 集群部署业界也提供了诸如 [[https://github.com/kubernetes/kubeadm][kubeadm]] 和 [[https://github.com/kubernetes-sigs/kubespray][kubespray]] 的部署方案，我们内部则是定制了一套 K8s Ansible Playbook，集群组件使用的是二进制安装，Systemd 管理，最大化保持可控。
+
+这里还要提一下容器底层存储驱动，我们先用的 Device mapper，再用的 Overlay，之后又变更成 Overlay2。最早调研选型是准备用 Device mapper 的，结合之前的使用经验 Device mapper 运维成本较其它高而且本身也存在很多问题。最后实际选用的是当时来说较为激进的 Overlay 驱动，Overlay 本身有一些缺陷，比如 inode 问题和不能限制容器使用的存储空间大小的问题。之后又出了 Overlay2，Overlay2 解决了之前 Overlay 的很多问题，当然也可以指定存储空间限制了，而且已经是 Production Ready 了，所以我们又把存储切到了 Overlay2。
 
 ** 趟过的坑
 
@@ -179,11 +183,15 @@ CMD ["/my/script", "--with", "--args"]
 The better metric is container_memory_working_set_bytes as this is what the OOM killer is watching for.
 #+END_SRC
 
-简而言之，OOM Killer 评判的值就是 =container_memory_working_set_bytes= ，可是实际对比发现，有些 Java 容器实际的内存占用和 =container_memory_working_set_bytes= 相差甚远，很多该值是 90%+ 的，实际使用工具 ps 等工具查看确只有 50% 或者更低。最后我们是通过 =container_memory_usage_bytes - container_memory_cache= 计算容器内存占用，相比 working_set 要准确多了。至于最后为什么使用这个计算，时间跨度有点长了，当时也没有记录，记得除了查资料之外还看了 docker stats 这块的源码。
+简而言之，OOM Killer 评判的值就是 =container_memory_working_set_bytes= ，可是实际对比发现，有些 Java 容器实际的内存占用和 =container_memory_working_set_bytes= 相差甚远，很多该值是 90%+ 的，实际使用 ps 工具查看确只占用 50% 或更低。最后我们是通过 =container_memory_usage_bytes - container_memory_cache= 计算容器内存占用，相比 working_set 要准确多了。至于最后为什么使用这个计算，时间跨度有点长了，当时也没有记录，记得除了查资料之外还看了 docker stats 这块的源码。
 
 *** Calico CNI 网络 IP 没有正常回收的问题
 
 这个之前知乎相关的分享好像也提到过，也是一个比较恼人的问题，后来内部就专门写了个脚本，定时做一些清理释放的工作。
+
+*** Pod 通过 Service IP 访问不了自己的问题
+
+当 Pod 通过自身 Service IP 访问的时候，如果 kube-proxy 刚好调度的实例是 Pod 自身的话，这个时候就出现无法访问的问题。一开始排查以为是 =--hairpin-mode= 配置的问题，实际测试下来并不是。具体详细的排查流程已经更新到前文提到的 Issue 里面了 [[https://github.com/opskumu/issues/issues/23#issuecomment-547280434][Pod 无法通过 Service IP 访问自身]] 。
 
 *** 容器内自定义时间的问题
 
@@ -193,13 +201,19 @@ The better metric is container_memory_working_set_bytes as this is what the OOM 
 
 还有很多其它的一些问题，包括 K8s 本身的 Bug，相关组件如 KubeDNS/CoreDNS 的 Bug 等等，这里不一一列举了，有些问题后续如果想到了也会再补充。
 
-** 一些感想
+** 其它
 
-*** 关于基于容器的云原生应用设计原则
+*** 技术之外，产品本身
+
+容器化相关，技术的比重是非常高的，如果容器底层不稳定，就没有上层一说了，但是又不能局限于技术。K2 这个项目可以在内部不断迭代的原因就是产品本身，2018 年初加入的小伙伴给 K2 注入了很多产品化的实质性东西。从最初 K2 只是一个单一的容器平台，慢慢的和内部平台融合成为了现在的挖财云。各平台的聚合，本身就是技术的融合，也是入口的融合。融合的同时还解决了内部跨各个平台协作的效率问题，这些带来的效益是显而易见的。对比 1.0 时候的 K2，无论从用户体验，还是上手成本都有非常大的提升。
+
+*** 基于容器的云原生应用设计原则
 
 关于应用在容器中运行要注意的一些原则，国外有人已经总结的相当好了，并且还出版了一本书 [[https://www.redhat.com/cms/managed-files/cm-oreilly-kubernetes-patterns-ebook-f19824-201910-en.pdf][《Kubernetes Patterns: Reusable Elements for Designing Cloud-Native Applications》]] 。点击书籍链接可以直接下载，红帽已经将其开源，没有版权问题。以下直接翻译摘录一部分内容：
 
 #+BEGIN_QUOTE
+- [[https://medium.com/@bibryam/cloud-native-container-design-principles-144ceaa98dba][Cloud Native Container Design Principles]]
+ 
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/cloud-native-container-design-principles.png]]
 
 - 构建时（Build time）
@@ -211,14 +225,6 @@ The better metric is container_memory_working_set_bytes as this is what the OOM 
   - =Lifecycle Conformance Principle= 生命周期一致性原则，容器必须能够捕捉来自平台的事件，并对这些事件做出应对
   - =Process Disposability Principle=  进程可处理原则，容器随时可被替代
   - =Runtime Confinement Principle= 运行时限制原则，每个容器必须声明其资源限制（CPU、Memory 等）
-
-- [[https://medium.com/@bibryam/cloud-native-container-design-principles-144ceaa98dba][Cloud Native Container Design Principles]]
 #+END_QUOTE
 
 与其说是设计原则，我更倾向于说是最佳实践，每一条原则都有对应 K8s 的实践。强烈建议可以把前面提到的书好好阅读一遍，然后结合实际的业务调整实践。
-
-*** TODO 技术之外，产品本身
-
-*** TODO 落地推广的难点
-
-** TODO 未来的路
