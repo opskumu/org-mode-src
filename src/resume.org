@@ -1,0 +1,73 @@
+#+Setupfile: ../tpls/tpl.org
+#+TITLE: 个人简历 
+#+DATE: <2019-12-31 Tue>
+
+
+* 联系方式
+
+- 手机： -
+- Email：opskumu@gmail.com
+
+* 个人信息
+
+- 吴磊 | 男 | 1988
+- 工作年限：7 年 (2012 年 6 月 ~ 至今)
+- 技术博客：https://blog.opskumu.com
+- Github: https://github.com/opskumu
+- 本科 | 湖南农业大学 | 动物科学专业
+
+* 工作经历
+
+** 杭州挖财（2016 年 8 月 ~ 至今）
+
+*职位：* 平台研发，云平台小组负责人（当前成员数 4 人）
+
+- 负责公司内部云平台管理和研发（包括容器服务、监控告警、日志服务以及
+  CMDB 等）
+- 负责公司内部容器平台研发和推广
+  - 从 0 到 1 开发构建基于 Kubernetes 的 Docker 容器化平台（Go）
+  - 推动公司测试环境容器化全面落地（覆盖内部 90%+ 的应用，当前运行应用数
+    4400+）
+  - 推动公司线上部分业务容器化（当前运行应用数 500+，实例数 1000+）
+- 支撑公司内部部分业务迁移至阿里云容器服务
+  - 定制内部容器平台适配阿里云环境，使内部业务快速无缝上线阿里云
+- 推动公司发布平台 Docker 化
+  - 支持内部发布系统结合 Kubernetes 资源调度进行打包和发布
+  - 实现内部应用（SpringBoot、Tomcat、Node 等）自动构建 Docker 镜像
+- 早期内部 CMDB 维护和功能开发（Python、Django）
+
+** 唯品会（上海） （2015 年 4 月 ~ 2016 年 8 月）
+
+*职位：* 平台研发
+
+- 参与唯品会 PaaS
+  持续集成和部署平台整体的架构设计（Jenkins、Kubernetes、Swarm）
+- 参与唯品会 PaaS 平台的开发（Go）
+  - 实现平台基于 Kubernetes 的资源配额管理
+  - 实现平台基于 Kubernetes 的容器 Volume 功能
+  - 自有服务集成 Promethues metrics，实现 Promethues 监控告警
+- 负责唯品会应用（1000+ 域）的 Docker 化迁移
+  - 负责 Docker 基础镜像的构建
+  - 负责应用 Docker 化标准定制、文档编写、Docker 技术培训
+- 负责唯品会 PaaS 平台基础设施的部署和维护（Docker、Kubernetes、Swarm）
+  - 构建和定制基于 Promethues + Grafana 容器监控系统
+  - 实现 Docker 集群管理工具 Kubernetes、Swarm 自动化部署（Ansible）
+
+** 上海江游（ 2013 年 8 月 ~ 2015 年 4 月 ）
+
+*职位：* 系统运维
+
+- 独立负责热血街霸3D手游、英雄神殿页游、美食大战老鼠页游项目维护
+  - 参与设计游戏项目的系统架构（Nginx、LVS、Keepalived）和后期 DB
+    维护（MySQL）
+  - 负责实现游戏更新、开合服自动化脚本开发部署（Python、Shell、Puppet）
+- 负责构建和维护基于 OpenNebula 的企业私有云（2000+ KVM）
+- 推动团队文档化（Markdown）、标准化建立，组织推进内部运维技术分享
+
+** 北京知道创宇（2013 年 1 月 ~ 2013 年 8 月）
+
+*职位：* 系统运维
+
+- 参与公司 CDN 产品加速乐的服务部署和维护
+- Vmware ESXi 私有云、腾讯云主机业务维护
+- Nagios 系统监控构建以及监控插件开发（Python）
