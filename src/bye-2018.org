@@ -1,5 +1,5 @@
 #+SETUPFILE: ../tpls/tpl.org
-#+TITLE: top command tips
+#+TITLE: 2018，小结
 #+DATE: <2019-01-01 Tue>
 
 30 号的时候，好友 [[http://www.zhangjiee.com][张杰]] 就喊着该写文章了，年终总结似乎已成惯例。我囔囔着说，不急不急，总会写的（至于写些什么，我心里是没什么数的）。直到打开电脑的时候，也不确定该写些什么，那么就想到哪里写到哪里吧。
