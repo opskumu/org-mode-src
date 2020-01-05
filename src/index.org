@@ -4,6 +4,10 @@
 
 ** Blog
 
+*** 2020
+
+- 2020-01-01 [[file:bye-2019.org][2019，小结]]
+
 *** 2019
 
 - 2019-11-26 [[file:wacai-docker.org][挖财 Kubernetes 容器化之路]]
