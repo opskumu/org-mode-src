@@ -6,6 +6,7 @@
 
 *** 2020
 
+- 2020-01-20 [[file:kubernetes-ext-service.org][Kubernetes 外部服务映射]]
 - 2020-01-01 [[file:bye-2019.org][2019，小结]]
 
 *** 2019
@@ -62,12 +63,12 @@
 - 2016-03-16 [[file:for-my-brother.org][马上毕业了，还能做些什么]]
 - 2016-03-08 [[file:docker-memory-limit.org][Docker 内存资源限制]]
 - 2016-02-17 [[file:rbd-docker-plugin.org][Docker 使用 Ceph RBD Volume]]
+- 2016-01-01 [[file:bye-2015.org][2015，小结]]
 
 -----
 
 *** 2015
 
-- 2015-12-31 [[file:bye-2015.org][2015，小结]]
 - 2015-12-09 [[file:some-thoughts.org][我所能想到的一些事情]]
 - 2015-11-04 [[file:cadvisor.org][cAdvisor 容器数据采集]]
 - 2015-10-30 [[file:docker-storage-setup.org][Docker lvm device mapper]]
