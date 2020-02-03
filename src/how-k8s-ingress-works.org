@@ -11,7 +11,7 @@
 
 ** NGINX 配置 
 
-Ingress controller 的目标是构造配置文件（nginx.conf）。这个需求的主要含义是在配置文件有任何变更后都需要重新加载 NGINX。不过需要特别注意的是，在只有 ==upstream== 配置变更的时候我们不需要重新加载 Nginx（即当你部署你的应用时 Endpoints 变更）。我们使用 [[https://github.com/openresty/lua-nginx-module][lua-nginx-module]] 达到这个目的。请通过[[https://kubernetes.github.io/ingress-nginx/how-it-works/#avoiding-reloads-on-endpoints-changes][ 下面的内容]] 来学习我们如何做到这一点。
+Ingress controller 的目标是构造配置文件（nginx.conf）。这个需求的主要含义是在配置文件有任何变更后都需要重新加载 NGINX。不过需要特别注意的是，在只有 =upstream= 配置变更的时候我们不需要重新加载 Nginx（即当你部署你的应用时 Endpoints 变更）。我们使用 [[https://github.com/openresty/lua-nginx-module][lua-nginx-module]] 达到这个目的。请通过[[https://kubernetes.github.io/ingress-nginx/how-it-works/#avoiding-reloads-on-endpoints-changes][ 下面的内容]] 来学习我们如何做到这一点。
 
 ** NGINX 模型
 
