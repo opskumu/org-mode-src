@@ -1,0 +1,68 @@
+#+SETUPFILE: ../tpls/tpl.org
+#+TITLE: Nginx Ingress 控制器工作机制
+#+DATE: <2020-02-03 Mon>
+
+本文为 [[https://kubernetes.github.io/ingress-nginx/how-it-works/][NGINX ingress controller - How it works]] 官方译文，这篇文章基本概括了 ingress-nginx 的工作机制，在这篇文章的基础上结合源码阅读对其原理会更深入。
+
+-----
+
+本文的目的是说明 Nginx ingress controller 是如何工作的，特别是 Nginx 模型是如何构建的以及我们为何需要这个模型。
+
+
+** NGINX 配置 
+
+Ingress controller 的目标是构造配置文件（nginx.conf）。这个需求的主要含义是在配置文件有任何变更后都需要重新加载 NGINX。不过需要特别注意的是，在只有 ==upstream== 配置变更的时候我们不需要重新加载 Nginx（即当你部署你的应用时 Endpoints 变更）。我们使用 [[https://github.com/openresty/lua-nginx-module][lua-nginx-module]] 达到这个目的。请通过[[https://kubernetes.github.io/ingress-nginx/how-it-works/#avoiding-reloads-on-endpoints-changes][ 下面的内容]] 来学习我们如何做到这一点。
+
+** NGINX 模型
+
+通常，一个 Kubernetes 控制器采用 [[https://coreos.com/kubernetes/docs/latest/replication-controller.html#the-reconciliation-loop-in-detail][synchronization loop pattern]] 来检查控制器中所需的状态是否已更新或者需要变更。为了达到这个目的，我们需要使用集群的不同对象来构建模型，特别是（无特殊顺序）Ingresses，Services，Endpoints，Secrets，以及 Configmaps 来生成反映集群状态的时间点配置文件。
+
+为了从集群获取这些对象，我们使用 [[https://godoc.org/k8s.io/client-go/informers#NewFilteredSharedInformerFactory][Kubernetes Informers]] ，特别是 =FilteredSharedInformer= 。当一个新的对象添加、修改或者移除的时候，informers 允许通过 [[https://godoc.org/k8s.io/client-go/tools/cache#ResourceEventHandlerFuncs][callbacks]] 针对单个变更进行响应。不幸的是，没有办法知道一个特定的变更是否会影响最终的配置文件。因此在每次变更时，我们都必须基于集群的状态重新构建一个新模型，并将其和当前的模型进行比较。如果新模型等于当前模型，那么我们就可以避免生成新的 NGINX 配置并触发重新加载。相反的，我们只通过 Endpoints 检查不同。如果这样我们使用 HTTP POST 请求一个新的 Endpoints 列表发送给运行在 Nginx 中的 Lua 程序并且避免重新生成一个新的 NGINX 配置以及触发重新加载。如果运行的模型和当前的差异不仅仅是 Endpoints，我们则基于新的模型创建一个新的 NGINX 配置文件，替代当前的模型并触发一次重新加载。
+
+该模型的用途之一是状态没有变化时避免不必要的重新加载，并检测定义中的冲突。
+
+生成 NGINX 配置的最终画像是从一个 [[https://github.com/kubernetes/ingress-nginx/blob/master/rootfs/etc/nginx/template/nginx.tmpl][Go template]]，针对这个模板所需要的变量通过新的模型输入。
+
+** 构建 NGINX 模型
+
+建立模型是一项成本比较高的操作，基于这个原因，使用同步循环是必须的。通过使用 [[https://github.com/kubernetes/ingress-nginx/blob/master/internal/task/queue.go#L38][work queue]]，可以不丢失变更并通过 [[https://golang.org/pkg/sync/#Mutex][sync.Mutex]] 移除来强制执行一次同步循环，此外还可以在同步循环的开始和结束之间创建一个时间窗口，从而允许我们摒弃不必要的更新。重要的是要理解，集群中的任何变更都会生成事件，然后 informer 会发送给控制器，这也是使用 [[https://github.com/kubernetes/ingress-nginx/blob/master/internal/task/queue.go#L38][work queue]] 的原因之一。
+
+建立模型的操作方式：
+
++ 通过 =CreationTimestamp= 字段对 Ingress 规则排序，即最早创建的规则优先
++ 如果相同 host 的相同路径被多个 Ingress 定义，那么最早创建的规则优先
++ 如果多个 Ingress 包含相同 host 的 TLS 部分，那么最早创建的规则优先
++ 如果多个 Ingresses 定义了一个 annotation 影响到 Server block 配置，那么最早创建的规则优先
++ 创建一个 NGINX Servers 列表（每个主机名）
++ 创建一个 NGINX Upstreams 列表
++ 如果多个 Ingresses 定义了同一个 host 的不同路径，ingress 控制器会合并这些定义
++ Annotations 被应用于这个 Ingress 的所有路径
++ 多个 Ingresses 可以定义不同的 annotations。这些定义不会在 Ingresses 之间共享
+
+** 什么时候重新加载是必须的
+
+接下来的场景描述什么时候需要重新加载：
+
++ 新的 Ingress 资源创建
++ 添加 TLS 部分到现有的 Ingress
++ 变更 Ingress annotations 并不仅仅影响 upstream 配置。对于实例 =load-balance= annotation 不需要重新加载
++ Ingress 的路径被添加/移除
++ 一个 Ingress，Service、Secret 被移除
++ 一些 Ingress 缺少引用的对象可用时，如 Service 或者 Secret
++ 一个 Secret 被更新
+
+** 避免重新加载
+
+在某些情况下，有可能避免重新加载，尤其是在 endpoints 发送变化的时候，如 pod 启动或者被替换时。完全移除重新加载这超过了 Ingress 控制器的范围。这将需要大量的工作，并且有时没有任何意义。仅当 NGINX 变更了读取新配置的方式时，这才可以变更，基本上，新的变更不会替代工作进程。
+
+*** 避免 Endpoints 变更时重新加载
+
+在每个 endpoint 变更上，控制器从所有能看到的服务上获取 endpoints 并生成相应的后端对象。然后将这些对象发送给运行在 Nginx 内部的 Lua 处理程序。Lua 程序将这些后端存储在共享内存区域。然后对于在 =balancer_by_lua= 上下文运行的每个请求，Lua 代码检测 endpoints 选择对应 upstream 并应用已经配置的负载均衡算法。Nginx 负责其余的工作。这样，我们避免在 endpoint 变更时重新加载 Nginx。注意，这也包括仅影响 Nginx =upstream= 配置的 annoations 变更。
+
+在频繁部署应用的较大集群中，这个特性可以避免大量的 Nginx 重新加载，否则会影响响应延迟，负责均衡质量（每一次重新加载 Nginx 都会重置负载均衡状态）等等。
+
+*** 避免因错误的配置而中断
+
+因为 ingress 控制器使用 [[https://coreos.com/kubernetes/docs/latest/replication-controller.html#the-reconciliation-loop-in-detail][synchronization loop pattern]]，它对所有匹配到的对象应用配置。如果某些 ingress 对象配置损坏，如 =nginx.ingress.kubernetes.io/configuration-snippet= annotation 语法错误，生成的配置变得不可用，将不会重新加载并不再考虑其它入口。
+
+为了防止这种情况发生，nginx ingress 控制器选择暴露一个 [[https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook][validating admission webhook server]] 以确保传入的 ingress 对象可用性。这个 webhook 把传入的 ingress 对象追加到 ingresses 列表上，生成配置并调用 nginx 以确保配置没有语法错误。

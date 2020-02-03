@@ -6,6 +6,7 @@
 
 *** 2020
 
+- 2020-02-03 [[file:how-k8s-ingress-works.org][Nginx Ingress 控制器工作机制]]
 - 2020-01-20 [[file:kubernetes-ext-service.org][Kubernetes 外部服务映射]]
 - 2020-01-01 [[file:bye-2019.org][2019，小结]]
 
