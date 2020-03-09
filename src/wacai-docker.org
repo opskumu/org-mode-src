@@ -209,6 +209,10 @@ The better metric is container_memory_working_set_bytes as this is what the OOM 
 
 测试需求偶尔会有自定义服务器时间的问题，但是在容器内这个问题基本还处于无解状态。
 
+#+BEGIN_QUOTE
+经网友 =79= 提醒，可以采用 libfaketime 来修改容器时间 https://github.com/wolfcw/libfaketime ，虽然会有些成本，不过大部分场景应该是适用的，感谢指出。
+#+END_QUOTE
+
 -----
 
 还有很多其它的一些问题，包括 K8s 本身的 Bug，相关组件如 KubeDNS/CoreDNS 的 Bug 等等，这里不一一列举了，有些问题后续如果想到了也会再补充。
