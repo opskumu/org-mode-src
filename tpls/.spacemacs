@@ -13,7 +13,7 @@
       org-html-postamble-format
       '(("en" "<a class=\"author\"
          href=\"https://blog.opskumu.com\">%a</a> / <span
-         class=\"date\">%T</span><span class=\"creator\">%c</span>")))
+         class=\"date\">%d</span><span class=\"creator\">%c</span>")))
 
 (setq org-html-validation-link nil)
 ;; (setq org-publish-use-timestamps-flag nil)
