@@ -8,4 +8,3 @@
 #+STARTUP: content
 #+STARTUP: showall
 #+STARTUP: showeverything
-#+OPTIONS: html-postamble:nil ^:nil
