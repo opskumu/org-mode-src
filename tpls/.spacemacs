@@ -5,7 +5,6 @@
 ;; org 自动换行
 (add-hook 'org-mode-hook 'toggle-truncate-lines)
 
-
 (require 'ox-publish)
 (require 'ox-html)
 ;; Postamble.
@@ -15,8 +14,10 @@
          href=\"https://blog.opskumu.com\">%a</a> / <span
          class=\"date\">%d</span><span class=\"creator\">%c</span>")))
 
+(setq org-html-htmlize-output-type 'css)
 (setq org-html-validation-link nil)
 ;; (setq org-publish-use-timestamps-flag nil)
+
 ;; Postamble.
 (setq org-publish-project-alist
       '(
