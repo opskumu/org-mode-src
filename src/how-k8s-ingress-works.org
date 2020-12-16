@@ -57,7 +57,7 @@ Ingress controller 的目标是构造配置文件（nginx.conf）。这个需求
 
 *** 避免 Endpoints 变更时重新加载
 
-在每个 endpoint 变更上，控制器从所有能看到的服务上获取 endpoints 并生成相应的后端对象。然后将这些对象发送给运行在 Nginx 内部的 Lua 处理程序。Lua 程序将这些后端存储在共享内存区域。然后对于在 =balancer_by_lua= 上下文运行的每个请求，Lua 代码检测 endpoints 选择对应 upstream 并应用已经配置的负载均衡算法。Nginx 负责其余的工作。这样，我们避免在 endpoint 变更时重新加载 Nginx。注意，这也包括仅影响 Nginx =upstream= 配置的 annoations 变更。
+在每个 endpoint 变更上，控制器从所有能看到的服务上获取 endpoints 并生成相应的后端对象。然后将这些对象发送给运行在 Nginx 内部的 Lua 处理程序。Lua 程序将这些后端存储在共享内存区域。然后对于在 =balancer_by_lua= 上下文运行的每个请求，Lua 代码检测 endpoints 选择对应 upstream 并应用已经配置的负载均衡算法。Nginx 负责其余的工作。这样，我们避免在 endpoint 变更时重新加载 Nginx。注意，这包括 annotation 的变更，不过也只是影响 Nginx =upstream= 的配置。
 
 在频繁部署应用的较大集群中，这个特性可以避免大量的 Nginx 重新加载，否则会影响响应延迟，负责均衡质量（每一次重新加载 Nginx 都会重置负载均衡状态）等等。
 
