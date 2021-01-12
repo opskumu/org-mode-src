@@ -269,7 +269,7 @@ webhooks:
 kubectl label ns <namespace> pod-admission-webhook-injection=enabled
 #+END_SRC 
 
-==secret.yaml=
+=secret.yaml=
 
 #+BEGIN_SRC bash 
 kubectl create secret tls pod-admission-webhook --dry-run=client --cert=tls.crt --key=tls.key --namespace kube-system -o yaml > secret.yaml
