@@ -1,6 +1,8 @@
 #+SETUPFILE: ../tpls/tpl.org
-#+TITLE: 自定义 Kubernetes 准入控制器 Webhook
+#+TITLE: 自定义 Kubernetes 准入控制器
 #+DATE: <2021-01-12 Tue>
+
+** 理论概要
 
 除了 Kubernetes 默认的 admission controller，我们可以使用 admission webhooks 作为准入链的一部分。admission webhooks 调用 webhook 服务以在 pod 创建时变更配置，如注入标签，或者在准入过程中验证 pod 配置。下图为准入控制器流程：
 
@@ -24,6 +26,8 @@ Admission webhooks 可以使用如下几个场景：
 + 通过 mutating webhook 注入 side-car 到 Pod（istio 的 side-car 就是采用这种方式注入的）
 + 限制项目使用某个资源（如限制用户创建的 Pod 使用超过限制的资源等）
 + 自定义资源的字段复杂验证（如 CRD 资源相关字段的规则验证等）
+
+** 场景说明
 
 本文通过一个较为实用的场景来自定义编写 admission webhooks，使用 Kubernetes 的过程中可能遇到过 DNS 5s 延迟的问题，产生问题的原因可以具体参考官方 issue [[https://github.com/kubernetes/kubernetes/issues/56903][DNS intermittent delays of 5s]] 。这里我们通过编写 admission mutating webhook 注入 DNS 配置，以达到解决问题的目的。因为我们是针对 Pod 资源的 admission webhook，对于 CRD 的资源我们可以使用 kubebuilder 来生成脚手架。但是对于 core 类型的资源如 Pod，kubebuilder 并不支持，我们需要直接使用 [[https://github.com/kubernetes-sigs/controller-runtime][controller-runtime]] 编写，官方提供了内建资源 webhook 的示例 [[https://github.com/kubernetes-sigs/controller-runtime/tree/master/examples/builtins][controller-runtime/examples/builtins/]] （CRD 资源建议参考 [[https://book.kubebuilder.io/reference/webhook-overview.html][kubebuilder webhook）]]。validating 和 mutating webhook 类似，这里我们以 mutating webhook 为例。
 
@@ -233,7 +237,7 @@ openssl x509 -req -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.
 
 ** 服务部署
 
-=mutatingwebhook.yaml=
++ mutatingwebhook.yaml
 
 证书生成之后，创建 Kubernetes 部署文件：
 
@@ -265,17 +269,17 @@ webhooks:
 
 注意以上通过 =namespaceSelector= 来决定是否执行 webhook。如果要开启，则需要添加对应 labels，如：
 
-#+BEGIN_SRC 
+#+BEGIN_SRC bash
 kubectl label ns <namespace> pod-admission-webhook-injection=enabled
 #+END_SRC 
 
-=secret.yaml=
++ secret.yaml
 
 #+BEGIN_SRC bash 
 kubectl create secret tls pod-admission-webhook --dry-run=client --cert=tls.crt --key=tls.key --namespace kube-system -o yaml > secret.yaml
 #+END_SRC
 
-=service.yaml=
++ service.yaml
 
 #+BEGIN_SRC yaml 
 apiVersion: v1
@@ -296,7 +300,7 @@ spec:
   type: ClusterIP
 #+END_SRC
 
-=deployment.yaml=
++ deployment.yaml
 
 #+BEGIN_SRC yaml 
 apiVersion: apps/v1
