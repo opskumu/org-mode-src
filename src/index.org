@@ -6,6 +6,7 @@
    
 *** 2021
 
+- 2021-01-13 [[file:kubernetes-crd.org][自定义 Kubernetes CRD]]
 - 2021-01-12 [[file:kubernetes-mutating-webhook.org][自定义 Kubernetes 准入控制器]]
 
 -----
