@@ -1,5 +1,5 @@
 #+SETUPFILE: ../tpls/tpl.org
-#+TITLE: 自定义 Kubernetes 准入控制器
+#+TITLE: 自定义 Kubernetes 准入控制器 Webhook
 #+DATE: <2021-01-12 Tue>
 
 除了 Kubernetes 默认的 admission controller，我们可以使用 admission webhooks 作为准入链的一部分。admission webhooks 调用 webhook 服务以在 pod 创建时变更配置，如注入标签，或者在准入过程中验证 pod 配置。下图为准入控制器流程：
