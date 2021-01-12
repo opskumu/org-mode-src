@@ -357,3 +357,9 @@ spec:
 根据实际情况修改相应的字段，如镜像、空间、命名等等，通过 =kubectl= 部署以上服务。
 
 至此，一个简单的自定义 admission webhook 流程全部完成，完整代码见 [[https://github.com/opskumu/admission-webhook-example][admission-webhook-example]]
+
+** 参考
+
++ [[https://docs.openshift.com/container-platform/3.11/architecture/additional_concepts/dynamic_admission_controllers.html][Custom Admission Controllers]]
++ [[https://github.com/kubernetes-sigs/controller-runtime/tree/master/examples/builtins][controller-runtime/examples/builtins/]]
++ [[https://banzaicloud.com/blog/k8s-admission-webhooks/][In-depth introduction to Kubernetes admission webhooks]] 
