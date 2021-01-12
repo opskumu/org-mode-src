@@ -79,7 +79,7 @@ apis/test/v1
 
 默认生成 =apis/test/v1/configmaphistory_types.go= 代码如下：
 
-#+BEGIN_SRC go 
+#+BEGIN_SRC go
 ......
 // +kubebuilder:object:root=true
 
@@ -95,7 +95,7 @@ type ConfigMapHistory struct {
 
 我们创建 ConfigMapHistory 类型的资源的目的是存放 ConfigMap 的历史记录，所以需要针对以上代码做一些修改：
 
-#+BEGIN_SRC 
+#+BEGIN_SRC go
 ......
 // +genclient
 // +kubebuilder:object:root=true
@@ -244,8 +244,9 @@ bash "${CODEGEN_PKG}"/generate-groups.sh "client,informer,lister" \
 
 创建完成以上文件之后，执行以下命令生成代码：
 
-#+BEGIN_SRC bash 
-# K8SVERSION=v0.19.6                              // 注意此处版本以下几个包要一致，否则可能出现不兼容的情况
+#+BEGIN_SRC bash
+# 注意此处版本以下几个包要一致，否则可能出现不兼容的情况
+# K8SVERSION=v0.19.6
 # go get -v k8s.io/code-generator@${K8SVERSION}
 # go get -v k8s.io/client-go@${K8SVERSION}
 # go get -v k8s.io/apimachinery@${K8SVERSION}
@@ -291,6 +292,8 @@ configmaphistory.test.opskumu.com/test created
 NAME   AGE
 test   27s
 #+END_SRC
+
+完整示例代码参见 [[https://github.com/opskumu/crd-example][crd-example]]
 
 ** 参考文档
 
