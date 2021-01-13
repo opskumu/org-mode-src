@@ -1,6 +1,6 @@
 #+SETUPFILE: ../tpls/tpl.org
 #+TITLE: 革命，革谁的命
-#+DATE:
+#+DATE: <2015-08-14 Fri>
 
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/revolution.jpg]]
 
