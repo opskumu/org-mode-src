@@ -1,37 +1,25 @@
-#+SETUPFILE: ../tpls/tpl.org
 #+TITLE: Kumu's Blog 
-#+OPTIONS: toc:2 html-postamble:nil
+#+SETUPFILE: ../tpls/tpl.org
+#+DATE: <2021-01-13 Wed>
+#+OPTIONS: toc:nil num:nil
 
-** Blog
-   
-*** 2021
+| [[https://opskumu.com][Index]] | [[https://blog.opskumu.com][Blog]] | [[https://wiki.opskumu.com][Wiki]] | [[https://github.com/opskumu/issues][Issues]] | [[https://github.com/opskumu][GitHub]] |
+
+* # Archive
+
+------
 
 - 2021-01-13 [[file:kubernetes-crd.org][自定义 Kubernetes CRD]]
 - 2021-01-12 [[file:kubernetes-mutating-webhook.org][自定义 Kubernetes 准入控制器]]
-
------
-
-*** 2020
-
 - 2020-02-03 [[file:how-k8s-ingress-works.org][Nginx Ingress 控制器工作机制]]
 - 2020-01-20 [[file:kubernetes-ext-service.org][Kubernetes 外部服务映射]]
 - 2020-01-01 [[file:bye-2019.org][2019，小结]]
-
------
-
-*** 2019
-
 - 2019-11-26 [[file:wacai-docker.org][挖财 Kubernetes 容器化之路]]
 - 2019-10-10 [[file:xinjiang-2019.org][北疆秋色]]
 - 2019-06-04 [[file:kubernetes-app.org][一个 HTTP 应用在 Kubernetes 的运行形式]]
 - 2019-02-11 [[file:nian.org][过年期间]]
 - 2019-01-06 [[file:just-for-fun.org][只是为了好玩]]
 - 2019-01-01 [[file:bye-2018.org][2018，小结]]
-
------
-
-*** 2018
-
 - 2018-12-23 [[file:borg.org][Google 大规模集群管理器 Borg]]
 - 2018-11-18 [[file:k8s-pod-affinity-antiaffinity.org][Kubernetes Pod 亲和性和反亲和性]]
 - 2018-09-07 [[file:kubernetes-upgrade-notes.org][Kubernetes 版本升级标注]]
@@ -43,11 +31,6 @@
 - 2018-04-01 [[file:cd-base.org][持续交付基础摘要]]
 - 2018-03-13 [[file:this-months-2018.org][三月琐事]]
 - 2018-01-01 [[file:bye-2017.org][2017，小结]]
-
------
-
-*** 2017
-
 - 2017-11-12 [[file:graceful-shutdown-docker.org][如何优雅的关闭容器]]
 - 2017-09-17 [[file:slow-down.org][要不，慢点吧]]
 - 2017-09-09 [[file:persistence.org][坚持这件小事儿]]
@@ -61,11 +44,6 @@
 - 2017-06-14 [[file:huangshan.org][黄山行]]
 - 2017-02-25 [[file:calico.org][Calico 备忘]]
 - 2017-01-01 [[file:bye-2016.org][2016，小结]]
-
------
-
-*** 2016
-
 - 2016-11-09 [[file:k8s-ingress.org][Kubernetes Ingress 服务负载均衡]]
 - 2016-04-20 [[file:go-pointers-defer-func.org][Go 指针、defer、匿名函数]]
 - 2016-03-27 [[file:docker-io-limit.org][Docker 磁盘 IO 资源限制]]
@@ -74,11 +52,6 @@
 - 2016-03-08 [[file:docker-memory-limit.org][Docker 内存资源限制]]
 - 2016-02-17 [[file:rbd-docker-plugin.org][Docker 使用 Ceph RBD Volume]]
 - 2016-01-01 [[file:bye-2015.org][2015，小结]]
-
------
-
-*** 2015
-
 - 2015-12-09 [[file:some-thoughts.org][我所能想到的一些事情]]
 - 2015-11-04 [[file:cadvisor.org][cAdvisor 容器数据采集]]
 - 2015-10-30 [[file:docker-storage-setup.org][Docker lvm device mapper]]
@@ -90,21 +63,13 @@
 - 2015-01-26 [[file:bye-2014.org][2014，小结]]
 - 2015-01-14 [[file:mysql-blob.org][MySQL 大字段溢出数据回写失败]]
 - 2015-01-09 [[file:rsync.org][rsync 备份备忘]]
-
------
-
-*** 2014
-
 - 2014-12-22 [[file:docker.org][Docker 学习笔记]]
 - 2014-12-19 [[file:sublime.org][Sublime Text2 tips]]
 - 2014-11-25 [[file:init-ssh.org][init 管理 ssh 服务]]
 - 2014-11-18 [[file:lvs-nat.org][One Network LVS-NAT]]
 - 2014-02-17 [[file:mysql-rep.org][MySQL 复制备忘]]
- 
------
-
-*** 2013
-
 - 2013-08-06 [[file:tmux.org][终端利器 Tmux]]
 - 2013-06-19 [[file:pdsh-pssh.org][批量主机管理 pdsh & pssh]]
 - 2013-06-07 [[file:top.org][top command tips]]
+
+------
