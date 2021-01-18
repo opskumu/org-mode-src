@@ -1,6 +1,6 @@
 #+TITLE: Kumu's Blog 
 #+SETUPFILE: ../tpls/tpl.org
-#+DATE: <2021-01-13 Wed>
+#+DATE: <2021-01-17 Sun>
 #+OPTIONS: toc:nil num:nil
 
 | [[https://opskumu.com][Index]] | [[https://blog.opskumu.com][Blog]] | [[https://wiki.opskumu.com][Wiki]] | [[https://github.com/opskumu/issues][Issues]] | [[https://github.com/opskumu][GitHub]] |
@@ -11,6 +11,7 @@
 
 - 2021-01-13 [[file:kubernetes-crd.org][自定义 Kubernetes CRD]]
 - 2021-01-12 [[file:kubernetes-mutating-webhook.org][自定义 Kubernetes 准入控制器]]
+- 2020-06-10 [[file:client-go-under-the-hood.org][client-go 背后机制]]
 - 2020-02-03 [[file:how-k8s-ingress-works.org][Nginx Ingress 控制器工作机制]]
 - 2020-01-20 [[file:kubernetes-ext-service.org][Kubernetes 外部服务映射]]
 - 2020-01-01 [[file:bye-2019.org][2019，小结]]
