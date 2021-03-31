@@ -1,0 +1,170 @@
+#+SETUPFILE: ../tpls/tpl.org
+#+TITLE: Kubernetes 访问控制
+#+DATE: <2018-07-26 Thu>
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/components-of-kubernetes.png]]
+
+图摘自 [[https://kubernetes.io/docs/concepts/overview/components/][Kubernetes Components | Kubernetes]]
+
+如上图，这是一个典型的 Kubernetes 集群组件图，通过上图我们可以看到 Kubernetes 各组件都是以 APIServer 作为网关通信的。为了安全，APIServer 一般通过 TLS 认证对外暴露，集群组件若要访问 APIServer 则需要相应的 TLS 证书。
+
+下图为 APIserver 的控制访问过程，完整的访问控制需要经过 =认证= 、 =授权= 以及 =准入控制= 三个模块，图中 4 表示 APIServer 访问 ETCD 集群，同样也是采用 TLS 认证的。
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/access-control-overview.png]]
+
+图摘自 [[https://kubernetes.io/docs/concepts/security/controlling-access/][Controlling Access to the Kubernetes API | Kubernetes]]
+
+这里要说明的是，APIServer 本身支持多种认证方式，并不只是 TLS 一种，默认我们使用 TLS 认证（可以启用多种认证方式）。目前 APIServer 支持以下认证方式：
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/kubernetes-authentication.png]]
+
+这里我们会着重介绍 TLS 认证方式，准入控制可以参考之前写的文章[[https://blog.opskumu.com/kubernetes-mutating-webhook.html][自定义 Kubernetes 准入控制器]]，其他认证方式详情可以参见 [[https://kubernetes.io/docs/reference/access-authn-authz/authentication/][Authenticating | Kubernetes。]]
+
+** TLS 双向认证
+
+TLS 是安全传输层协议，包括两部分：TLS 记录协议和 TLS 握手协议。TLS 记录协议主要保证传输过程中信息传输的完整性和私密性，这一部分通过协商后的密钥来加密数据。TLS 握手协议主要是为了认证对方的身份、协商密钥。
+
+APIServer 和集群组件通信使用 TLS 双向认证，顾名思义，客户端和服务器端都需要验证对方的身份，相比单向认证，双向认证客户端除了需要从服务器端下载服务器的公钥证书进行验证外，还需要把客户端的公钥证书上传到服务器端给服务器端进行验证，等双方都认证通过了，才开始建立安全通信通道进行数据传输，具体流程如下：
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/mutual-ssl.png]]
+
+图摘自 [[https://www.codeproject.com/Articles/326574/An-Introduction-to-Mutual-SSL-Authentication][An Introduction to Mutual SSL Authentication - CodeProject]]
+
+kube-apiserver 涉及到的证书选项很多，以下为梳理之后的证书选项和说明：
+
+#+begin_src 
+--etcd-cafile                        # etcd CA 证书
+--etcd-certfile                      # APIServer 访问 etcd client 公钥
+--etcd-keyfile                       # APIServer 访问 etcd client 密钥
+--client-ca-file                     # 验证访问 APIServer 的 client CA 证书
+--tls-cert-file                      # APIServer 服务的公钥
+--tls-private-key-file               # APIServer 服务的密钥
+--service-account-key-file           # 验证 ServiceAccount tokens 的公钥
+--service-account-signing-key-file   # ServiceAccount tokens 签名密钥
+--kubelet-client-certificate         # 访问 kubelet 的公钥
+--kubelet-client-key                 # 访问 kubelet 的密钥
+--requestheader-client-ca-file       # 用于签名 --proxy-client-cert-file 和--proxy-client-key-file 指定的证书，启用 aggregator 时使用
+--proxy-client-cert-file             # 用于请求 aggregator client 公钥
+--proxy-client-key-file              # 用于请求 aggregator client 密钥
+#+end_src
+
+
+值得注意的是，APIServer 在 TLS 认证的过程中是使用证书中的 =CN= 和 =O= 字段作为用户名和组名标识的，通过这两个字段来结合 ClusterRole/ClusterRoleBinding/Role/RoleBinding 达到关联授权的目的，而它本身并没有用户和组的管理机制。
+
+** RBAC
+
+以上主要介绍 TLS 认证，认证之后我们如何在认证基础上针对资源授权管理呢？这里就要介绍到 RBAC 机制。RBAC，字面意思就是基于角色的权限访问控制。Kubernetes 中的 RBAC 主要涉及到上面提到的 ClusterRole/ClusterRoleBinding/Role/RoleBinding 的资源，其中 ClusterRole/ClusterRolebinding 是全局的角色，Role/RoleBind 是针对 namespace 级别的角色。Role 是对用户拥有权限的抽象，RoleBinding 将角色绑定到用户（User）、组（Group）或者服务账户（Service Account）。下图更为形象的展示了对应关系：
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/role-binding.png]]
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/cluster-role-binding.png]]
+
+图摘自 Kubernetes RBAC 101: authorization | Cloud Native Computing Foundation (cncf.io)
+ 
+我们看具体的资源配置，这里以 CoreDNS 为例：
+
+#+begin_src 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: coredns   # 如果你要绑定权限，这里的 name 需要对应 TLS 证书中的 CN 字段
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  - services
+  - pods
+  - namespaces
+  verbs:
+  - list
+  - watch
+#+end_src
+
+ClusterRole 定义了 CoreDNS apiGroups 范围，可以访问的资源以及权限。
+
+#+begin_src 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: coredns
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: coredns
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: kube-system
+#+end_src
+
+ClusterRoleBinding 中 subjects 则定义了 ServiceAccount 以及对应的空间（subjects 还可以是组或者 Service Account，其中组对应 TLS 证书中的 O 字段）。上文提过证书中的 CN 和 O 作为用户和组标识字段，ClusterRoleBinding/RoleBinding 关联 ClusterRole/Role 和 subjects，在只定义 ServiceAccount 的情况下，CN 要生效，可以加上 =system:serviceaccount:= 前缀，如 CoreDNS 的例子，如要 TLS 方式访问，可以配置 CN 为 =system:serviceaccount:coredns= ，详情可以参见 [[https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-subjects][Using RBAC Authorization ]]。
+
+** TLS bootstrapping
+
+前文已经提了，之所以使用 TLS 认证是为了集群间通信安全目的。正常情况下，我们在扩缩容节点的时候需要手动给对应的节点签发证书，这会增加一些额外的工作。Kubernetes 从 1.4 开始引入了证书请求和签名 API 简化了这一流程，也就是我们这里要说的 TLS bootstrapping。下图展示了 TLS bootstrapping 的工作流程：
+
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/bootstrapping-workflow.png]]
+
+图摘自 [[https://medium.com/@toddrosner/kubernetes-tls-bootstrapping-cf203776abc7][Kubernetes TLS bootstrapping]]
+
+上图流程简单说就是，kubelet 启动时首先会去寻找 kubeconfig 文件，当 kubeconfig 文件存在，则且在启动的时候利用 kubeconfig 直接加入集群。如果 kubeconfig 不存在，kubelet 使用 bootstrap.kubeconfig 文件建立认证请求，通过 bootstrapping 机制签发证书然会自动创建 kubeconfig 文件，加入到集群。详细的流程参考 [[https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet-tls-bootstrapping/#bootstrap-initialization][TLS bootstrapping | Kubernetes]]，其中生成的证书会检查有效期，在有效期快到期的时候会重新签注证书。
+
+Kubelet 要启用 TLS bootstrapping，需要开启选项 --bootstrap-kubeconfig ，我们可以看下 bootstrap.kubeconfig 的一个示例配置内容：
+
+#+begin_src 
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    certificate-authority: /etc/kubernetes/pki/ca.pem      # CA 证书地址
+    server: https://<APIServer>:<APIServerPort>            # APIServer 地址
+  name: bootstrap
+contexts:
+- context:
+    cluster: bootstrap
+    user: kubelet-bootstrap
+  name: bootstrap
+current-context: bootstrap
+preferences: {}
+users:
+- name: kubelet-bootstrap
+  user:
+token: 50bc4305185c3c2d8e31cab9223a8107 # APIServer 定义的 bootstrap token
+#+end_src
+
+
+** Node Authorization
+
+我们知道 TLS bootstrapping 主要针对的是 kubelet 的证书自动签注认证的，Node Authorization 是专门针对 kubelet API 请求授权的特殊授权。节点授权允许 Kubelet 有以下 API 操作权限：
+
+- 读操作
+  - services
+  - endpoints
+  - nodes
+  - pods
+  - secrets, configmaps, pvc 以及绑定到该节点的 pv
+- 写操作
+  - 节点和节点状态（通过 NodeRestriction 准入控制插件限制 kubelet 修改自身的节点）
+  - pods 和 pods 状态（通过 NodeRestriction 准入控制插件限制 kubelet 修改自身调度的 pods）
+  - events
+- 认证操作
+  - TLS bootstrapping 读写访问 certificationsigningrequests API 
+  - 检查和创建 tokenreviews and subjectaccessreviews 认证授权的能力
+
+在未来版本中，节点授权将支持添加或删除权限，以确保 kubelet 具有正确操作所需的最小权限集。
+
+APIServer 可以通过 ~--authorization-mode=Node~ 开启 Node 授权，正常情况下开启 Node 的同时也会开启 RBAC，如 ~--authorization-mode=Node~ ,RBAC 。APIServer 还有开启 =NodeRestriction= 限制 kubelet API 写操作， ~--enable-admission-plugins=...,NodeRestriction,...~ 。
+
+** 参考
+
+- [[https://developer.aliyun.com/article/726414][HTTPS 双向认证研究]]
+- [[https://www.infoq.cn/article/1mmhe2zxcikfil3mxp7d][API-server 安全机制详]]
+- [[https://www.jianshu.com/p/90a5d6aedee0][Kubernetes API 安全机制详解]] 
+- [[https://www.cncf.io/blog/2020/08/28/kubernetes-rbac-101-authorization/][Kubernetes RBAC 101: authorization]]
+- [[https://medium.com/@toddrosner/kubernetes-tls-bootstrapping-cf203776abc7][Kubernetes TLS bootstrapping]]
+- [[https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet-tls-bootstrapping/][TLS bootstrapping | Kubernetes]]
+- [[https://kubernetes.io/docs/setup/best-practices/certificates/][PKI certificates and requirements | Kubernetes]]
+- [[https://kubernetes.io/docs/reference/access-authn-authz/rbac/][Using RBAC Authorization | Kubernetes]]
+- [[https://kubernetes.io/docs/reference/access-authn-authz/authorization/][Authorization Overview | Kubernetes]]
+- [[https://kubernetes.io/docs/reference/access-authn-authz/node/][Using Node Authorization | Kubernetes]]
