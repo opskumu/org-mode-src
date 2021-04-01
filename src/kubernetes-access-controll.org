@@ -59,7 +59,7 @@ kube-apiserver 涉及到的证书选项很多，以下为梳理之后的证书�
 
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/cluster-role-binding.png]]
 
-图摘自 Kubernetes RBAC 101: authorization | Cloud Native Computing Foundation (cncf.io)
+图摘自 [[https://www.cncf.io/blog/2020/08/28/kubernetes-rbac-101-authorization/][Kubernetes RBAC 101: authorization | Cloud Native Computing Foundation (cncf.io)]]
  
 我们看具体的资源配置，这里以 CoreDNS 为例：
 
