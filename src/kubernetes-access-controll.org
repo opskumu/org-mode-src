@@ -1,6 +1,6 @@
 #+SETUPFILE: ../tpls/tpl.org
 #+TITLE: Kubernetes 访问控制
-#+DATE: <2018-07-26 Thu>
+#+DATE: <2021-03-31 Wed>
 
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/components-of-kubernetes.png]]
 
@@ -98,7 +98,7 @@ subjects:
   namespace: kube-system
 #+end_src
 
-ClusterRoleBinding 中 subjects 则定义了 ServiceAccount 以及对应的空间（subjects 还可以是组或者 Service Account，其中组对应 TLS 证书中的 O 字段）。上文提过证书中的 CN 和 O 作为用户和组标识字段，ClusterRoleBinding/RoleBinding 关联 ClusterRole/Role 和 subjects，在只定义 ServiceAccount 的情况下，CN 要生效，可以加上 =system:serviceaccount:= 前缀，如 CoreDNS 的例子，如要 TLS 方式访问，可以配置 CN 为 =system:serviceaccount:coredns= ，详情可以参见 [[https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-subjects][Using RBAC Authorization ]]。
+ClusterRoleBinding 中 subjects 则定义了 ServiceAccount 以及对应的空间（subjects 还可以是组或者 Service Account，其中组对应 TLS 证书中的 O 字段）。上文提过证书中的 =CN= 和 =O= 作为用户和组标识字段，ClusterRoleBinding/RoleBinding 关联 ClusterRole/Role 和 subjects，在只定义 ServiceAccount 的情况下，CN 要生效，可以加上 =system:serviceaccount:= 前缀，如 CoreDNS 的例子，如要 TLS 方式访问，可以配置 CN 为 =system:serviceaccount:coredns= ，详情可以参见 [[https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-subjects][Using RBAC Authorization ]]。
 
 ** TLS bootstrapping
 
@@ -110,7 +110,7 @@ ClusterRoleBinding 中 subjects 则定义了 ServiceAccount 以及对应的空�
 
 上图流程简单说就是，kubelet 启动时首先会去寻找 kubeconfig 文件，当 kubeconfig 文件存在，则且在启动的时候利用 kubeconfig 直接加入集群。如果 kubeconfig 不存在，kubelet 使用 bootstrap.kubeconfig 文件建立认证请求，通过 bootstrapping 机制签发证书然会自动创建 kubeconfig 文件，加入到集群。详细的流程参考 [[https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet-tls-bootstrapping/#bootstrap-initialization][TLS bootstrapping | Kubernetes]]，其中生成的证书会检查有效期，在有效期快到期的时候会重新签注证书。
 
-Kubelet 要启用 TLS bootstrapping，需要开启选项 --bootstrap-kubeconfig ，我们可以看下 bootstrap.kubeconfig 的一个示例配置内容：
+Kubelet 要启用 TLS bootstrapping，需要开启选项 =--bootstrap-kubeconfig= ，我们可以看下 bootstrap.kubeconfig 的一个示例配置内容：
 
 #+begin_src 
 apiVersion: v1
