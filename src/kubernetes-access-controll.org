@@ -154,7 +154,7 @@ token: 50bc4305185c3c2d8e31cab9223a8107 # APIServer 定义的 bootstrap token
 
 在未来版本中，节点授权将支持添加或删除权限，以确保 kubelet 具有正确操作所需的最小权限集。
 
-APIServer 可以通过 ~--authorization-mode=Node~ 开启 Node 授权，正常情况下开启 Node 的同时也会开启 RBAC，如 ~--authorization-mode=Node~ ,RBAC 。APIServer 还有开启 =NodeRestriction= 限制 kubelet API 写操作， ~--enable-admission-plugins=...,NodeRestriction,...~ 。
+APIServer 可以通过 ~--authorization-mode=Node~ 开启 Node 授权，正常情况下开启 Node 的同时也会开启 RBAC，如 ~--authorization-mode=Node,RBAC~ 。APIServer 还有开启 =NodeRestriction= 限制 kubelet API 写操作， ~--enable-admission-plugins=...,NodeRestriction,...~ 。
 
 ** 参考
 
