@@ -8,3 +8,5 @@
 #+STARTUP: content
 #+STARTUP: showall
 #+STARTUP: showeverything
+#+OPTIONS: ^:nil
+(setq-default org-use-sub-superscripts nil)
