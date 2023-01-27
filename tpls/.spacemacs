@@ -7,6 +7,8 @@
 
 (require 'ox-publish)
 (require 'ox-html)
+(require 'org-tempo)
+
 ;; Postamble.
 (setq org-html-postamble t
       org-html-postamble-format
