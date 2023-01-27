@@ -16,6 +16,7 @@
 
 (setq org-html-htmlize-output-type 'css)
 (setq org-html-validation-link nil)
+(setq org-export-with-sub-superscripts '{})
 ;; (setq org-publish-use-timestamps-flag nil)
 
 ;; Postamble.
