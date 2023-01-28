@@ -2,12 +2,15 @@
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 
+
 ;; org 自动换行
 (add-hook 'org-mode-hook 'toggle-truncate-lines)
 
 (require 'ox-publish)
 (require 'ox-html)
 (require 'org-tempo)
+(setq org-html-html5-fancy t
+      org-html-doctype "html5")
 
 ;; Postamble.
 (setq org-html-postamble t
