@@ -2460,7 +2460,7 @@ body {
     margin: 2% auto;
     font-size: 14px;
     line-height: 1.4em;
-    font-family: Georgia, serif;
+    font-family: Georgia,"Times New Roman",PMingLiu,STSong,SimSun,"Noto Serif CJK","WenQuanYi Bitmap Song",serif;
     color: #333
 }
 
