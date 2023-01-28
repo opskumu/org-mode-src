@@ -44,7 +44,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:/usr/local/cuda-8.0/extras/CUPT
 *** NVIDIA cuDNN Install
 
 #+BEGIN_QUOTE
-cuDNN 是专门针对深度框架设计的一套 GPU 计算加速方案，支持的框架包括 Caffe、TensorFlow 等，https://developer.nvidia.com/cuDNN（官网现在下载需要注册账户才能下载）
+cuDNN 是专门针对深度框架设计的一套 GPU 计算加速方案，支持的框架包括 Caffe、TensorFlow 等，[[https://developer.nvidia.com/cuDNN]] （官网现在下载需要注册账户才能下载）
 #+END_QUOTE
 
 #+BEGIN_SRC
@@ -86,7 +86,7 @@ Fri Jul 14 23:19:38 2017
 
 nvidia 官方提供了 nvidia-docker 可以直接驱动 GPU 设备，具体文档可以参考 [[https://github.com/NVIDIA/nvidia-docker][nvidia-docker]]，本文介绍原生的 Docker 方式。
 
-[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/docker-gpu.png]] > Example of how CUDA integrates with Docker
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/docker-gpu.png]]
 
 本文以 =tensorflow/tensorflow:latest-gpu= 测试：
 
