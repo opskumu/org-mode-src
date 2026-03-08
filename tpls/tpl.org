@@ -1,7 +1,7 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/org.css"/>
-#+HTML_HEAD: <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+#+HTML_HEAD: <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 #+HTML_HEAD: <script>var hlf=function(){Array.prototype.forEach.call(document.querySelectorAll("pre.src"),function(t){var e;e=t.getAttribute("class").toLowerCase(),e=e.replace(/src-(\w+)/,"src-$1 $1"),console.log(e),t.setAttribute("class",e),hljs.highlightBlock(t)})};addEventListener("DOMContentLoaded",hlf);</script>
-#+HTML_HEAD: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/googlecode.min.css" />
+#+HTML_HEAD: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" />
 #+HTML_HEAD: <style>
 #+HTML_HEAD:   .navbar { background: #f8f9fa; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; margin-bottom: 2rem; }
@@ -14,6 +14,12 @@
 #+HTML_HEAD:   #table-of-contents h2 { font-size: 1rem; margin: 0 0 0.5rem 0; }
 #+HTML_HEAD:   #table-of-contents ul { margin: 0; padding-left: 1.2rem; }
 #+HTML_HEAD:   #table-of-contents li { margin: 0.3rem 0; }
+#+HTML_HEAD:   .content { max-width: 800px; margin: 0 auto; padding: 0 1rem; }
+#+HTML_HEAD:   .content img { max-width: 100%; height: auto; }
+#+HTML_HEAD:   .content table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+#+HTML_HEAD:   .content th, .content td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+#+HTML_HEAD:   .content th { background: #f8f9fa; }
+#+HTML_HEAD:   .content blockquote { border-left: 4px solid #ddd; margin: 1rem 0; padding: 0.5rem 1rem; color: #666; }
 #+HTML_HEAD: </style>
 #+HTML_HEAD: <script>
 #+HTML_HEAD: document.addEventListener("DOMContentLoaded", function() {
@@ -24,7 +30,7 @@
 #+HTML_HEAD:   var chinese = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
 #+HTML_HEAD:   var english = (text.match(/[a-zA-Z]+/g) || []).reduce(function(a,b){return a+b.length},0);
 #+HTML_HEAD:   var wordCount = chinese + english;
-#+HTML_HEAD:   var wpm = 200;
+#+HTML_HEAD:   var wpm = 350;
 #+HTML_HEAD:   var readTime = Math.max(1, Math.ceil(wordCount / wpm));
 #+HTML_HEAD:   var postamble = document.querySelector("#postamble");
 #+HTML_HEAD:   if (postamble) { 
