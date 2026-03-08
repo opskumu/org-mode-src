@@ -23,7 +23,8 @@
 #+HTML_HEAD: </style>
 #+HTML_HEAD: <script>
 #+HTML_HEAD: document.addEventListener("DOMContentLoaded", function() {
-#+HTML_HEAD:   if (window.location.href.indexOf('index.html') > -1) document.body.classList.add('index-page');
+#+HTML_HEAD:   var path = window.location.pathname;
+#+HTML_HEAD:   if (path === '/' || path === '/index.html' || path.endsWith('index.html')) document.body.classList.add('index-page');
 #+HTML_HEAD:   var navbar = '<nav class="navbar"><a class="navbar-brand" href="index.html">Kumu\'s Blog</a><div class="navbar-links"><a href="index.html">Blog</a><a href="https://wiki.opskumu.com" target="_blank">Wiki</a><a href="https://github.com/opskumu/issues" target="_blank">Issues</a><a href="https://github.com/opskumu" target="_blank">GitHub</a><a href="https://opskumu.com/" target="_blank">About</a></div></nav>';
 #+HTML_HEAD:   document.body.insertAdjacentHTML("afterbegin", navbar);
 #+HTML_HEAD:   var text = document.querySelector("#content").innerText;
