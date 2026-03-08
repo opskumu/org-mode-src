@@ -3,11 +3,7 @@
 #+HTML_HEAD: <script>var hlf=function(){Array.prototype.forEach.call(document.querySelectorAll("pre.src"),function(t){var e;e=t.getAttribute("class").toLowerCase(),e=e.replace(/src-(\w+)/,"src-$1 $1"),console.log(e),t.setAttribute("class",e),hljs.highlightBlock(t)})};addEventListener("DOMContentLoaded",hlf);</script>
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" />
-#+HTML_HEAD: <link rel="preconnect" href="https://fonts.googleapis.com">
-#+HTML_HEAD: <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-#+HTML_HEAD: <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
 #+HTML_HEAD: <style>
-#+HTML_HEAD:   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "Helvetica Neue", Arial, sans-serif; font-size: 16px; line-height: 1.7; color: #333; }
 #+HTML_HEAD:   .navbar { background: #f8f9fa; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; margin-bottom: 2rem; }
 #+HTML_HEAD:   .navbar-brand { font-weight: 600; color: #333; text-decoration: none; font-size: 1.4rem; }
 #+HTML_HEAD:   .navbar-links a { margin-left: 2rem; color: #666; text-decoration: none; font-size: 1.1rem; }
