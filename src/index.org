@@ -1,9 +1,7 @@
-#+TITLE: Kumu's Blog 
+#+TITLE: Index
 #+SETUPFILE: ../tpls/tpl.org
 #+DATE: <2021-02-16 Tue>
-#+OPTIONS: toc:nil num:nil
-
-| [[https://opskumu.com][Index]] | [[https://blog.opskumu.com][Blog]] | [[https://wiki.opskumu.com][Wiki]] | [[https://github.com/opskumu/issues][Issues]] | [[https://github.com/opskumu][GitHub]] |
+#+OPTIONS: toc:nil num:nil 
 
 * # Archive
 

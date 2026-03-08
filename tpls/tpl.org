@@ -2,6 +2,37 @@
 #+HTML_HEAD: <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
 #+HTML_HEAD: <script>var hlf=function(){Array.prototype.forEach.call(document.querySelectorAll("pre.src"),function(t){var e;e=t.getAttribute("class").toLowerCase(),e=e.replace(/src-(\w+)/,"src-$1 $1"),console.log(e),t.setAttribute("class",e),hljs.highlightBlock(t)})};addEventListener("DOMContentLoaded",hlf);</script>
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/googlecode.min.css" />
+#+HTML_HEAD: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" />
+#+HTML_HEAD: <style>
+#+HTML_HEAD:   .navbar { background: #f8f9fa; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; margin-bottom: 2rem; }
+#+HTML_HEAD:   .navbar-brand { font-weight: 600; color: #333; text-decoration: none; font-size: 1.4rem; }
+#+HTML_HEAD:   .navbar-links a { margin-left: 2rem; color: #666; text-decoration: none; font-size: 1.1rem; }
+#+HTML_HEAD:   body.index-page .title { display: none; }
+#+HTML_HEAD:   .navbar-links a:hover { color: #333; }
+#+HTML_HEAD:   .reading-time { color: #888; font-size: 0.85rem; margin-top: 0.5rem; }
+#+HTML_HEAD:   #table-of-contents { background: #f8f9fa; padding: 1rem 2rem; margin-bottom: 2rem; border-radius: 4px; }
+#+HTML_HEAD:   #table-of-contents h2 { font-size: 1rem; margin: 0 0 0.5rem 0; }
+#+HTML_HEAD:   #table-of-contents ul { margin: 0; padding-left: 1.2rem; }
+#+HTML_HEAD:   #table-of-contents li { margin: 0.3rem 0; }
+#+HTML_HEAD: </style>
+#+HTML_HEAD: <script>
+#+HTML_HEAD: document.addEventListener("DOMContentLoaded", function() {
+#+HTML_HEAD:   if (window.location.href.indexOf('index.html') > -1) document.body.classList.add('index-page');
+#+HTML_HEAD:   var navbar = '<nav class="navbar"><a class="navbar-brand" href="index.html">Kumu\'s Blog</a><div class="navbar-links"><a href="index.html">Blog</a><a href="https://wiki.opskumu.com" target="_blank">Wiki</a><a href="https://github.com/opskumu/issues" target="_blank">Issues</a><a href="https://github.com/opskumu" target="_blank">GitHub</a><a href="https://opskumu.com/" target="_blank">About</a></div></nav>';
+#+HTML_HEAD:   document.body.insertAdjacentHTML("afterbegin", navbar);
+#+HTML_HEAD:   var text = document.querySelector("#content").innerText;
+#+HTML_HEAD:   var chinese = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+#+HTML_HEAD:   var english = (text.match(/[a-zA-Z]+/g) || []).reduce(function(a,b){return a+b.length},0);
+#+HTML_HEAD:   var wordCount = chinese + english;
+#+HTML_HEAD:   var wpm = 200;
+#+HTML_HEAD:   var readTime = Math.max(1, Math.ceil(wordCount / wpm));
+#+HTML_HEAD:   var postamble = document.querySelector("#postamble");
+#+HTML_HEAD:   if (postamble) { 
+#+HTML_HEAD:     postamble.insertAdjacentHTML("afterbegin", "<span class=\"reading-time\"><i class=\"far fa-clock\"></i> " + readTime + " min read</span> | ");
+#+HTML_HEAD:     postamble.innerHTML = postamble.innerHTML.replace(/(\d{4}-\d{2}-\d{2}) \w+ \d{2}:\d{2}/, '$1');
+#+HTML_HEAD:   }
+#+HTML_HEAD: });
+#+HTML_HEAD: </script>
 #+OPTIONS: html-style:nil
 #+AUTHOR: Kumu
 #+EMAIL: opskumu@gmail.com
