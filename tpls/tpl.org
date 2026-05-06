@@ -4,29 +4,82 @@
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" />
 #+HTML_HEAD: <style>
+#+HTML_HEAD:   :root { --link: #527d9a; --link-hover: #035; --focus: #2563eb; --nav-h: 72px; }
+#+HTML_HEAD:   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+#+HTML_HEAD:   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+#+HTML_HEAD:   .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+#+HTML_HEAD:   .skip-link:focus { left: 1rem; top: 1rem; width: auto; height: auto; padding: 0.5rem 0.75rem; border-radius: 6px; background: #111827; color: #fff; z-index: 1000; }
+#+HTML_HEAD:   a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
 #+HTML_HEAD:   .navbar { background: #f8f9fa; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; margin-bottom: 2rem; }
 #+HTML_HEAD:   .navbar-brand { font-weight: 600; color: #333; text-decoration: none; font-size: 1.4rem; }
-#+HTML_HEAD:   .navbar-links a { margin-left: 2rem; color: #666; text-decoration: none; font-size: 1.1rem; }
+#+HTML_HEAD:   .navbar-links a { margin-left: 1rem; color: #666; text-decoration: none; font-size: 1.05rem; min-height: 44px; display: inline-flex; align-items: center; padding: 0 .5rem; border-radius: 6px; }
+#+HTML_HEAD:   .navbar-links a.active { color: #111827; background: #e5edf5; font-weight: 600; }
 #+HTML_HEAD:   body.index-page .title { display: none; }
 #+HTML_HEAD:   .navbar-links a:hover { color: #333; }
 #+HTML_HEAD:   .reading-time { color: #888; font-size: 0.85rem; margin-top: 0.5rem; }
 #+HTML_HEAD:   #table-of-contents { background: #f8f9fa; padding: 1rem 2rem; margin-bottom: 2rem; border-radius: 4px; }
 #+HTML_HEAD:   #table-of-contents h2 { font-size: 1rem; margin: 0 0 0.5rem 0; }
 #+HTML_HEAD:   #table-of-contents ul { margin: 0; padding-left: 1.2rem; }
-#+HTML_HEAD:   #table-of-contents li { margin: 0.3rem 0; }
-#+HTML_HEAD:   .content { max-width: 800px; margin: 0 auto; padding: 0 1rem; }
+#+HTML_HEAD:   #table-of-contents li { margin: 0.2rem 0; }
+#+HTML_HEAD:   #table-of-contents a { display: inline-block; padding: .15rem .25rem; border-radius: 6px; }
+#+HTML_HEAD:   #table-of-contents a:hover { background: rgba(0,0,0,.04); }
+#+HTML_HEAD:   #table-of-contents a:focus-visible { background: rgba(37,99,235,.12); }
+#+HTML_HEAD:   #table-of-contents a.active { background: rgba(37,99,235,.14); color: #111827; font-weight: 600; }
+#+HTML_HEAD:   #table-of-contents ul ul { margin-top: .15rem; }
+#+HTML_HEAD:   #table-of-contents ul ul a { font-size: .95em; color: #4b5563; }
+#+HTML_HEAD:   .content { max-width: 800px; margin: 0 auto; padding: 0 1rem; font-size: 1.02rem; line-height: 1.72; letter-spacing: .01em; }
+#+HTML_HEAD:   .content p { margin: .85rem 0; max-width: 72ch; }
+#+HTML_HEAD:   .content li { line-height: 1.68; }
+#+HTML_HEAD:   .content h1, .content h2, .content h3, .content h4 { line-height: 1.38; letter-spacing: .005em; }
+#+HTML_HEAD:   .content h2 { margin-top: 1.5rem; }
+#+HTML_HEAD:   .content h3 { margin-top: 1.2rem; }
 #+HTML_HEAD:   .content img { max-width: 100%; height: auto; }
 #+HTML_HEAD:   .content table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
 #+HTML_HEAD:   .content th, .content td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
 #+HTML_HEAD:   .content th { background: #f8f9fa; }
 #+HTML_HEAD:   .content blockquote { border-left: 4px solid #ddd; margin: 1rem 0; padding: 0.5rem 1rem; color: #666; }
+#+HTML_HEAD:   .content { line-height: 1.65; }
+#+HTML_HEAD:   .content p, .content li { overflow-wrap: anywhere; }
+#+HTML_HEAD:   .content img { height: auto; max-width: 100%; }
+#+HTML_HEAD:   .org-src-container { margin: 1.1rem 0; }
+#+HTML_HEAD:   pre.src, pre.example { overflow: auto; line-height: 1.55; tab-size: 2; }
+#+HTML_HEAD:   pre.src { border-radius: 8px; }
+#+HTML_HEAD:   .org-src-container { position: relative; }
+#+HTML_HEAD:   .code-copy-btn { position: absolute; top: .45rem; right: .45rem; min-height: 44px; min-width: 44px; padding: .25rem .45rem; border-radius: 10px; border: 1px solid rgba(209,213,219,.85); background: rgba(255,255,255,.72); color: #111827; font-size: .8rem; cursor: pointer; display: inline-flex; align-items: center; gap: .35rem; opacity: .6; }
+#+HTML_HEAD:   .code-copy-btn:hover { background: #fff; border-color: #9ca3af; }
+#+HTML_HEAD:   .code-copy-btn:active { background: #f3f4f6; }
+#+HTML_HEAD:   .code-copy-btn.is-copied { border-color: #16a34a; color: #166534; }
+#+HTML_HEAD:   .code-copy-btn.is-error { border-color: #dc2626; color: #991b1b; }
+#+HTML_HEAD:   .code-copy-btn:hover, .code-copy-btn:focus-visible { opacity: 1; }
+#+HTML_HEAD:   .code-copy-btn .label { display: none; }
+#+HTML_HEAD:   .code-copy-btn:hover .label, .code-copy-btn:focus-visible .label { display: inline; }
+#+HTML_HEAD:   body.index-page .outline-3 > h3 { display: inline-block; margin: 1rem 0 .35rem; }
+#+HTML_HEAD:   body.index-page details.archive-year { border: 1px solid #e5e7eb; border-radius: 10px; padding: .6rem .75rem; background: #fff; margin: .55rem 0; }
+#+HTML_HEAD:   body.index-page details.archive-year > summary { cursor: pointer; list-style: none; user-select: none; }
+#+HTML_HEAD:   body.index-page details.archive-year > summary::-webkit-details-marker { display: none; }
+#+HTML_HEAD:   body.index-page details.archive-year > summary { display: flex; align-items: center; justify-content: space-between; gap: .75rem; font-weight: 600; color: #111827; }
+#+HTML_HEAD:   body.index-page details.archive-year > summary .meta { font-weight: 500; color: #6b7280; font-size: .95em; }
+#+HTML_HEAD:   body.index-page details.archive-year[open] { background: #fbfdff; }
+#+HTML_HEAD:   body.index-page details.archive-year .outline-text-3 { margin-top: .45rem; }
+#+HTML_HEAD:   body.index-page .archive-toolbar { display: flex; gap: .5rem; margin: .5rem 0 1rem; }
+#+HTML_HEAD:   body.index-page .archive-toolbar button { min-height: 44px; padding: .35rem .6rem; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; color: #111827; cursor: pointer; }
+#+HTML_HEAD:   body.index-page .archive-toolbar button:hover { background: #f9fafb; }
+#+HTML_HEAD:   body.index-page .archive-toolbar button:active { background: #f3f4f6; }
+#+HTML_HEAD:   .fab-top { position: fixed; right: 18px; bottom: 18px; min-width: 44px; min-height: 44px; padding: 0 .6rem; border-radius: 999px; border: 1px solid #e5e7eb; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,.08); color: #111827; display: inline-flex; align-items: center; justify-content: center; gap: .4rem; cursor: pointer; opacity: 0; pointer-events: none; transform: translateY(6px); transition: opacity .18s ease, transform .18s ease; }
+#+HTML_HEAD:   .fab-top.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+#+HTML_HEAD:   .fab-top i { font-size: .95rem; }
+#+HTML_HEAD:   .reading-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: linear-gradient(90deg, #60a5fa, #2563eb); z-index: 1100; transition: width .08s linear; }
+#+HTML_HEAD:   @media (max-width: 900px) { .navbar { padding: .7rem 1rem; flex-wrap: wrap; } .navbar-links { display: flex; flex-wrap: wrap; row-gap: .2rem; } .navbar-links a { margin-left: 0; } #table-of-contents { padding: .8rem 1rem; } }
 #+HTML_HEAD: </style>
 #+HTML_HEAD: <script>
 #+HTML_HEAD: document.addEventListener("DOMContentLoaded", function() {
 #+HTML_HEAD:   var path = window.location.pathname;
 #+HTML_HEAD:   if (path === '/' || path === '/index.html' || path.endsWith('index.html')) document.body.classList.add('index-page');
-#+HTML_HEAD:   var navbar = '<nav class="navbar"><a class="navbar-brand" href="index.html">Kumu\'s Blog</a><div class="navbar-links"><a href="index.html">Blog</a><a href="https://wiki.opskumu.com" target="_blank">Wiki</a><a href="https://github.com/opskumu/issues" target="_blank">Issues</a><a href="https://github.com/opskumu" target="_blank">GitHub</a><a href="https://opskumu.com/" target="_blank">About</a></div></nav>';
-#+HTML_HEAD:   document.body.insertAdjacentHTML("afterbegin", navbar);
+#+HTML_HEAD:   var navPath = path.replace(/\/+$/, '');
+#+HTML_HEAD:   var blogActive = (navPath === '' || navPath === '/' || navPath.endsWith('/index.html'));
+#+HTML_HEAD:   var skip = '<a class="skip-link" href="#content">Skip to main content</a><a class="skip-link" href="#table-of-contents">Skip to table of contents</a>';
+#+HTML_HEAD:   var navbar = '<nav class="navbar" role="navigation" aria-label="Primary"><a class="navbar-brand" href="index.html">Kumu\'s Blog</a><div class="navbar-links"><a href="index.html"' + (blogActive ? ' class="active" aria-current="page"' : '') + '>Blog</a><a href="https://wiki.opskumu.com" target="_blank" rel="noopener noreferrer">Wiki</a><a href="https://github.com/opskumu/issues" target="_blank" rel="noopener noreferrer">Issues</a><a href="https://github.com/opskumu" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://opskumu.com/" target="_blank" rel="noopener noreferrer">About</a></div></nav>';
+#+HTML_HEAD:   document.body.insertAdjacentHTML("afterbegin", '<div class="reading-progress" aria-hidden="true"></div>' + skip + navbar);
 #+HTML_HEAD:   var text = document.querySelector("#content").innerText;
 #+HTML_HEAD:   var chinese = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
 #+HTML_HEAD:   var english = (text.match(/[a-zA-Z]+/g) || []).reduce(function(a,b){return a+b.length},0);
@@ -38,6 +91,142 @@
 #+HTML_HEAD:     postamble.insertAdjacentHTML("afterbegin", "<span class=\"reading-time\"><i class=\"far fa-clock\"></i> " + readTime + " min read</span> | ");
 #+HTML_HEAD:     postamble.innerHTML = postamble.innerHTML.replace(/(\d{4}-\d{2}-\d{2}) \w+ \d{2}:\d{2}/, '$1');
 #+HTML_HEAD:   }
+#+HTML_HEAD:   if (document.body.classList.contains("index-page")) {
+#+HTML_HEAD:     var root = document.querySelector("#content");
+#+HTML_HEAD:     if (!root) return;
+#+HTML_HEAD:     var toolbar = document.createElement("div");
+#+HTML_HEAD:     toolbar.className = "archive-toolbar";
+#+HTML_HEAD:     toolbar.innerHTML = '<button type="button" data-action="expand">Expand all</button><button type="button" data-action="collapse">Collapse all</button>';
+#+HTML_HEAD:     var archiveHeader = root.querySelector("h2");
+#+HTML_HEAD:     if (archiveHeader && archiveHeader.parentElement) archiveHeader.parentElement.insertBefore(toolbar, archiveHeader.nextSibling);
+#+HTML_HEAD:     var yearHeadings = Array.prototype.slice.call(root.querySelectorAll(".outline-3 > h3"));
+#+HTML_HEAD:     yearHeadings.forEach(function(h3) {
+#+HTML_HEAD:       var outline3 = h3.parentElement;
+#+HTML_HEAD:       var text = outline3 ? outline3.querySelector(".outline-text-3") : null;
+#+HTML_HEAD:       if (!outline3 || !text) return;
+#+HTML_HEAD:       var links = text.querySelectorAll("a").length;
+#+HTML_HEAD:       var details = document.createElement("details");
+#+HTML_HEAD:       details.className = "archive-year";
+#+HTML_HEAD:       details.open = (h3.textContent || "").trim() === "2024";
+#+HTML_HEAD:       var summary = document.createElement("summary");
+#+HTML_HEAD:       summary.innerHTML = '<span>' + h3.textContent + '</span><span class="meta">' + links + ' post' + (links === 1 ? '' : 's') + '</span>';
+#+HTML_HEAD:       details.appendChild(summary);
+#+HTML_HEAD:       details.appendChild(text);
+#+HTML_HEAD:       outline3.insertBefore(details, h3);
+#+HTML_HEAD:       h3.remove();
+#+HTML_HEAD:     });
+#+HTML_HEAD:     toolbar.addEventListener("click", function(e) {
+#+HTML_HEAD:       var t = e.target;
+#+HTML_HEAD:       if (!t || !t.getAttribute) return;
+#+HTML_HEAD:       var action = t.getAttribute("data-action");
+#+HTML_HEAD:       if (!action) return;
+#+HTML_HEAD:       var all = root.querySelectorAll("details.archive-year");
+#+HTML_HEAD:       Array.prototype.forEach.call(all, function(d) { d.open = action === "expand"; });
+#+HTML_HEAD:     });
+#+HTML_HEAD:   }
+#+HTML_HEAD:   (function() {
+#+HTML_HEAD:     var btn = document.createElement("button");
+#+HTML_HEAD:     btn.type = "button";
+#+HTML_HEAD:     btn.className = "fab-top";
+#+HTML_HEAD:     btn.setAttribute("aria-label", "Back to top");
+#+HTML_HEAD:     btn.innerHTML = '<i class="fa-solid fa-arrow-up" aria-hidden="true"></i><span class="sr-only">Back to top</span>';
+#+HTML_HEAD:     document.body.appendChild(btn);
+#+HTML_HEAD:     var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+#+HTML_HEAD:     btn.addEventListener("click", function() {
+#+HTML_HEAD:       window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+#+HTML_HEAD:     });
+#+HTML_HEAD:     var onScroll = function() {
+#+HTML_HEAD:       if (window.scrollY > 600) btn.classList.add("is-visible");
+#+HTML_HEAD:       else btn.classList.remove("is-visible");
+#+HTML_HEAD:     };
+#+HTML_HEAD:     window.addEventListener("scroll", onScroll, { passive: true });
+#+HTML_HEAD:     onScroll();
+#+HTML_HEAD:   })();
+#+HTML_HEAD:   (function() {
+#+HTML_HEAD:     var bar = document.querySelector(".reading-progress");
+#+HTML_HEAD:     if (!bar) return;
+#+HTML_HEAD:     var onScroll = function() {
+#+HTML_HEAD:       var doc = document.documentElement;
+#+HTML_HEAD:       var scrollable = doc.scrollHeight - window.innerHeight;
+#+HTML_HEAD:       var percent = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+#+HTML_HEAD:       bar.style.width = Math.max(0, Math.min(100, percent)) + "%";
+#+HTML_HEAD:     };
+#+HTML_HEAD:     window.addEventListener("scroll", onScroll, { passive: true });
+#+HTML_HEAD:     onScroll();
+#+HTML_HEAD:   })();
+#+HTML_HEAD:   (function() {
+#+HTML_HEAD:     var toc = document.querySelector("#table-of-contents");
+#+HTML_HEAD:     if (!toc) return;
+#+HTML_HEAD:     var links = Array.prototype.slice.call(toc.querySelectorAll("a[href^=\"#\"]"));
+#+HTML_HEAD:     if (!links.length) return;
+#+HTML_HEAD:     var byId = new Map();
+#+HTML_HEAD:     links.forEach(function(a) {
+#+HTML_HEAD:       var id = (a.getAttribute("href") || "").slice(1);
+#+HTML_HEAD:       if (!id) return;
+#+HTML_HEAD:       var el = document.getElementById(id);
+#+HTML_HEAD:       if (el) byId.set(el, a);
+#+HTML_HEAD:     });
+#+HTML_HEAD:     var clear = function() { links.forEach(function(a){ a.classList.remove("active"); }); };
+#+HTML_HEAD:     if (!("IntersectionObserver" in window) || byId.size === 0) return;
+#+HTML_HEAD:     var obs = new IntersectionObserver(function(entries) {
+#+HTML_HEAD:       var visible = entries.filter(function(e){ return e.isIntersecting; }).sort(function(a,b){ return b.intersectionRatio - a.intersectionRatio; })[0];
+#+HTML_HEAD:       if (!visible) return;
+#+HTML_HEAD:       var a = byId.get(visible.target);
+#+HTML_HEAD:       if (!a) return;
+#+HTML_HEAD:       clear();
+#+HTML_HEAD:       a.classList.add("active");
+#+HTML_HEAD:     }, { rootMargin: "-20% 0px -70% 0px", threshold: [0.01, 0.1, 0.25, 0.5] });
+#+HTML_HEAD:     byId.forEach(function(_a, el){ obs.observe(el); });
+#+HTML_HEAD:   })();
+#+HTML_HEAD:   (function() {
+#+HTML_HEAD:     var blocks = Array.prototype.slice.call(document.querySelectorAll(".org-src-container > pre.src"));
+#+HTML_HEAD:     if (!blocks.length) return;
+#+HTML_HEAD:     var fallbackCopy = function(text) {
+#+HTML_HEAD:       var ta = document.createElement("textarea");
+#+HTML_HEAD:       ta.value = text;
+#+HTML_HEAD:       ta.setAttribute("readonly", "");
+#+HTML_HEAD:       ta.style.position = "absolute";
+#+HTML_HEAD:       ta.style.left = "-9999px";
+#+HTML_HEAD:       document.body.appendChild(ta);
+#+HTML_HEAD:       ta.select();
+#+HTML_HEAD:       var ok = false;
+#+HTML_HEAD:       try { ok = document.execCommand("copy"); } catch (_e) { ok = false; }
+#+HTML_HEAD:       document.body.removeChild(ta);
+#+HTML_HEAD:       return ok;
+#+HTML_HEAD:     };
+#+HTML_HEAD:     blocks.forEach(function(pre) {
+#+HTML_HEAD:       var container = pre.parentElement;
+#+HTML_HEAD:       if (!container || container.querySelector(".code-copy-btn")) return;
+#+HTML_HEAD:       var btn = document.createElement("button");
+#+HTML_HEAD:       btn.type = "button";
+#+HTML_HEAD:       btn.className = "code-copy-btn";
+#+HTML_HEAD:       btn.setAttribute("aria-label", "Copy code block");
+#+HTML_HEAD:       btn.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i><span class="label">Copy</span>';
+#+HTML_HEAD:       btn.addEventListener("click", function() {
+#+HTML_HEAD:         var text = pre.innerText || pre.textContent || "";
+#+HTML_HEAD:         var done = function(ok) {
+#+HTML_HEAD:           btn.classList.remove("is-copied", "is-error");
+#+HTML_HEAD:           if (ok) {
+#+HTML_HEAD:             btn.classList.add("is-copied");
+#+HTML_HEAD:             btn.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i><span class="label">Copied</span>';
+#+HTML_HEAD:           } else {
+#+HTML_HEAD:             btn.classList.add("is-error");
+#+HTML_HEAD:             btn.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i><span class="label">Failed</span>';
+#+HTML_HEAD:           }
+#+HTML_HEAD:           window.setTimeout(function() {
+#+HTML_HEAD:             btn.classList.remove("is-copied", "is-error");
+#+HTML_HEAD:             btn.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i><span class="label">Copy</span>';
+#+HTML_HEAD:           }, 1400);
+#+HTML_HEAD:         };
+#+HTML_HEAD:         if (navigator.clipboard && navigator.clipboard.writeText) {
+#+HTML_HEAD:           navigator.clipboard.writeText(text).then(function(){ done(true); }).catch(function(){ done(fallbackCopy(text)); });
+#+HTML_HEAD:         } else {
+#+HTML_HEAD:           done(fallbackCopy(text));
+#+HTML_HEAD:         }
+#+HTML_HEAD:       });
+#+HTML_HEAD:       container.appendChild(btn);
+#+HTML_HEAD:     });
+#+HTML_HEAD:   })();
 #+HTML_HEAD: });
 #+HTML_HEAD: </script>
 #+OPTIONS: html-style:nil
