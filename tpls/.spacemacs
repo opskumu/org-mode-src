@@ -15,9 +15,7 @@
 ;; Postamble.
 (setq org-html-postamble t
       org-html-postamble-format
-      '(("en" "<a class=\"author\"
-         href=\"https://blog.opskumu.com\">%a</a> / <span
-         class=\"date\">%d</span><span class=\"creator\">%c</span>")))
+      '(("en" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\">%c</span>")))
 
 (setq org-html-htmlize-output-type 'css)
 (setq org-html-validation-link nil)
