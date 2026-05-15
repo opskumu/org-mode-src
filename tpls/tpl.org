@@ -2,10 +2,12 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/site.css"/>
 #+HTML_HEAD: <meta property="og:site_name" content="Kumu's Blog"/>
 #+HTML_HEAD: <meta property="og:type" content="article"/>
+#+HTML_HEAD: <meta property="og:locale" content="zh_CN"/>
 #+HTML_HEAD: <meta name="twitter:card" content="summary"/>
 #+HTML_HEAD: <meta name="theme-color" content="#ffffff"/>
 #+HTML_HEAD: <script defer src="js/site.js"></script>
 #+OPTIONS: html-style:nil
+#+LANGUAGE: zh-CN
 #+DESCRIPTION: Personal notes on Kubernetes, Linux, Emacs, and tools — Kumu's blog.
 #+AUTHOR: Kumu
 #+EMAIL: opskumu@gmail.com
