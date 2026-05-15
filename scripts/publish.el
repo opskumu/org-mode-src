@@ -55,6 +55,126 @@
   (when (string-match regexp html)
     (match-string 1 html)))
 
+(defun opskumu-org--archive-posts ()
+  "Return posts from `src/index.org' in homepage archive order."
+  (let ((index-file (expand-file-name "src/index.org" opskumu-org-repo-root))
+        posts)
+    (when (file-readable-p index-file)
+      (with-temp-buffer
+        (insert-file-contents index-file)
+        (goto-char (point-min))
+        (while (re-search-forward
+                "^- \\([0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\) \\[\\[file:\\([^]]+\\.org\\)\\]\\[\\([^]\n]+\\)\\]\\]"
+                nil t)
+          (push (list :date (match-string 1)
+                      :file (match-string 2)
+                      :title (match-string 3))
+                posts))))
+    (nreverse posts)))
+
+(defun opskumu-org--post-url (post)
+  "Return the exported HTML filename for POST."
+  (concat (file-name-sans-extension (plist-get post :file)) ".html"))
+
+(defun opskumu-org--article-nav-link (post rel label)
+  "Return one article navigation link for POST with REL and LABEL."
+  (concat
+   "<a class=\"article-nav-link article-nav-" rel "\" href=\""
+   (opskumu-org--html-escape (opskumu-org--post-url post))
+   "\">"
+   "<span class=\"article-nav-label\">" label "</span>"
+   "<span class=\"article-nav-title\">"
+   (opskumu-org--html-escape (plist-get post :title))
+   "</span>"
+   "<span class=\"article-nav-date\">"
+   (opskumu-org--html-escape (plist-get post :date))
+   "</span>"
+   "</a>"))
+
+(defun opskumu-org--article-nav-html ()
+  "Return previous/next article navigation HTML for the current export."
+  (let* ((source-file (buffer-file-name))
+         (current (and source-file (file-name-nondirectory source-file)))
+         (posts (opskumu-org--archive-posts))
+         (index 0)
+         match-index)
+    (unless (or (not current) (string= current "index.org"))
+      (while (and posts (not match-index))
+        (when (string= current (plist-get (car posts) :file))
+          (setq match-index index))
+        (setq posts (cdr posts)
+              index (1+ index)))
+      (when match-index
+        (let* ((all-posts (opskumu-org--archive-posts))
+               (newer (and (> match-index 0) (nth (1- match-index) all-posts)))
+               (older (nth (1+ match-index) all-posts))
+               (links ""))
+          (when newer
+            (setq links (concat links (opskumu-org--article-nav-link newer "newer" "Newer"))))
+          (when older
+            (setq links (concat links (opskumu-org--article-nav-link older "older" "Older"))))
+          (unless (string-empty-p links)
+            (concat "<nav class=\"article-nav\" aria-label=\"Article navigation\">"
+                    links
+                    "</nav>")))))))
+
+(defun opskumu-org--article-nav-html-for-neighbors (newer older)
+  "Return article navigation HTML for NEWER and OLDER posts."
+  (let ((links ""))
+    (when newer
+      (setq links (concat links (opskumu-org--article-nav-link newer "newer" "Newer"))))
+    (when older
+      (setq links (concat links (opskumu-org--article-nav-link older "older" "Older"))))
+    (unless (string-empty-p links)
+      (concat "<nav class=\"article-nav\" aria-label=\"Article navigation\">"
+              links
+              "</nav>"))))
+
+(defun opskumu-org--inject-article-nav (html)
+  "Insert article navigation into exported HTML."
+  (let ((nav (opskumu-org--article-nav-html)))
+    (if (or (not nav) (string-match-p "class=\"article-nav\"" html))
+        html
+      (replace-regexp-in-string
+       "\n<div id=\"postamble\""
+       (concat "\n" nav "\n<div id=\"postamble\"")
+       html t t))))
+
+(defun opskumu-org--strip-article-nav (html)
+  "Remove existing generated article navigation from HTML."
+  (replace-regexp-in-string
+   "\n?<nav class=\"article-nav\"[^>]*>.*?</nav>\n?"
+   "\n"
+   html t t))
+
+(defun opskumu-org--insert-article-nav-html (html nav)
+  "Insert NAV before the postamble in HTML."
+  (replace-regexp-in-string
+   "\n<div id=\"postamble\""
+   (concat "\n" nav "\n<div id=\"postamble\"")
+   (opskumu-org--strip-article-nav html)
+   t t))
+
+(defun opskumu-org--write-article-navs (html-dir)
+  "Write static previous/next navigation into generated files under HTML-DIR."
+  (let* ((posts (opskumu-org--archive-posts))
+         (count (length posts))
+         (index 0))
+    (while (< index count)
+      (let* ((post (nth index posts))
+             (newer (and (> index 0) (nth (1- index) posts)))
+             (older (and (< index (1- count)) (nth (1+ index) posts)))
+             (nav (opskumu-org--article-nav-html-for-neighbors newer older))
+             (html-file (expand-file-name (opskumu-org--post-url post) html-dir)))
+        (when (and nav (file-readable-p html-file))
+          (with-temp-buffer
+            (insert-file-contents html-file)
+            (let ((updated (opskumu-org--insert-article-nav-html (buffer-string) nav)))
+              (erase-buffer)
+              (insert updated)
+              (write-region (point-min) (point-max) html-file nil 'silent)))))
+      (setq index (1+ index)))))
+
 (defun opskumu-org--inject-head-metadata (html backend info)
   "Add crawler-visible canonical and social metadata to exported HTML."
   (if (not (org-export-derived-backend-p backend 'html))
@@ -81,7 +201,8 @@
         (setq extra (concat extra "<meta name=\"twitter:description\" content=\"" (opskumu-org--html-escape description) "\"/>\n")))
       (if (string-empty-p extra)
           html
-        (replace-regexp-in-string "</head>" (concat extra "</head>") html t t)))))
+        (setq html (replace-regexp-in-string "</head>" (concat extra "</head>") html t t)))
+      (opskumu-org--inject-article-nav html))))
 
 (defun opskumu-org--push-htmlize-from-elpa ()
   "If GNU ELPA htmlize is under ~/.emacs.d/elpa, add it to `load-path'.
@@ -161,4 +282,5 @@ Helps `emacs --batch' find htmlize without a full interactive init."
              :publishing-function org-publish-attachment)
             ("org" :components ("notes" "static" "images"))))
     ;; Force: regenerate all HTML and recopy assets (avoids stale head/CSS).
-    (org-publish-project "org" t)))
+    (org-publish-project "org" t)
+    (opskumu-org--write-article-navs html)))
