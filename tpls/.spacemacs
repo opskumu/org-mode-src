@@ -26,6 +26,19 @@
    "</div>"
    "</nav>"))
 
+(defun opskumu-org--export-paper-ref-links (_backend)
+  "Export GitHub-friendly paper reference links with stable HTML anchors."
+  (goto-char (point-min))
+  (while (re-search-forward "\\[\\[#\\(ref-[0-9]+\\)\\]\\[\\([^]\n]+\\)\\]\\]" nil t)
+    (replace-match
+     (format "@@html:<a href=\"#%s\">%s</a>@@"
+             (match-string 1)
+             (match-string 2))
+     t t)))
+
+(add-to-list 'org-export-before-parsing-functions
+             #'opskumu-org--export-paper-ref-links)
+
 ;; Postamble.
 (setq org-export-default-language "zh-CN"
       org-html-preamble t

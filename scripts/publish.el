@@ -41,6 +41,18 @@
     (setq escaped (replace-regexp-in-string "<" "&lt;" escaped t t))
     (replace-regexp-in-string ">" "&gt;" escaped t t)))
 
+(defun opskumu-org--export-paper-ref-links (_backend)
+  "Export GitHub-friendly paper reference links with stable HTML anchors.
+GitHub's Org renderer needs `#ref-N' links to stay on the current page;
+the blog export should use the same stable anchors instead of generated ids."
+  (goto-char (point-min))
+  (while (re-search-forward "\\[\\[#\\(ref-[0-9]+\\)\\]\\[\\([^]\n]+\\)\\]\\]" nil t)
+    (replace-match
+     (format "@@html:<a href=\"#%s\">%s</a>@@"
+             (match-string 1)
+             (match-string 2))
+     t t)))
+
 (defun opskumu-org--current-page-url ()
   "Return the canonical URL for the Org file currently being exported."
   (let* ((file (buffer-file-name))
@@ -217,6 +229,8 @@ Helps `emacs --batch' find htmlize without a full interactive init."
 (defun opskumu-org--init-export-settings ()
   "Match `tpls/.spacemacs' + safe fallback when ELPA htmlize is missing in batch."
   (require 'ox-html)
+  (add-to-list 'org-export-before-parsing-functions
+               #'opskumu-org--export-paper-ref-links)
   (setq org-html-html5-fancy t
         org-html-doctype "html5"
         org-html-validation-link nil
