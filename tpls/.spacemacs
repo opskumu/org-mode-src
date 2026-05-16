@@ -26,6 +26,32 @@
    "</div>"
    "</nav>"))
 
+(defun opskumu-org--html-escape (text)
+  "Escape TEXT for safe insertion into HTML attributes."
+  (let ((escaped (or text "")))
+    (setq escaped (replace-regexp-in-string "&" "&amp;" escaped t t))
+    (setq escaped (replace-regexp-in-string "\"" "&quot;" escaped t t))
+    (setq escaped (replace-regexp-in-string "<" "&lt;" escaped t t))
+    (replace-regexp-in-string ">" "&gt;" escaped t t)))
+
+(defun opskumu-org--paper-ref-export (path _description backend _info)
+  "Export paper-style reference PATH as a compact superscript citation."
+  (let* ((refs (split-string (or path "") "[,;[:space:]]+" t))
+         (label (mapconcat #'identity refs ", ")))
+    (if (org-export-derived-backend-p backend 'html)
+        (concat
+         "<sup class=\"paper-ref\">"
+         (mapconcat
+          (lambda (ref)
+            (let ((escaped (opskumu-org--html-escape ref)))
+              (concat "<a href=\"#ref-" escaped "\">" escaped "</a>")))
+          refs
+          ", ")
+         "</sup>")
+      (concat "[" label "]"))))
+
+(org-link-set-parameters "paperref" :export #'opskumu-org--paper-ref-export)
+
 ;; Postamble.
 (setq org-export-default-language "zh-CN"
       org-html-preamble t

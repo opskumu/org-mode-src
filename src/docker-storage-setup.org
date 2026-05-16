@@ -52,7 +52,7 @@ loop1                                                                           
 
 ** Device Mapper: direct-lvm
 
-direct-lvm 也是使用 LVM， device mapper the dm-thinp 内核模块，使用 direct-lvm 不再使用 loopback 设备，直接使用 raw 分区(no filesystem)，在中等负载和高密度环境下会有更好的性能优势，另外官方也是不建议生产环境系统使用默认的 LVM thin pool，至于两种类型具体的性能对比可以参考 [[https://developerblog。redhat。com/2014/09/30/overview-storage-scalability-docker/][Comprehensive Overview of Storage Scalability in Docker]] 这篇文章。
+direct-lvm 也是使用 LVM， device mapper the dm-thinp 内核模块，使用 direct-lvm 不再使用 loopback 设备，直接使用 raw 分区(no filesystem)，在中等负载和高密度环境下会有更好的性能优势，另外官方也是不建议生产环境系统使用默认的 LVM thin pool，至于两种类型具体的性能对比可以参考 [[https://developerblog.redhat.com/2014/09/30/overview-storage-scalability-docker/][Comprehensive Overview of Storage Scalability in Docker]] 这篇文章。
 
 CentOS7 从 =docker-1.6.2-14.el7.centos.x86_64.rpm= 开始提供 =docker-storage-setup= 工具，方便配置 direct-lvm，所以推荐使用该工具配置。当然也可以手动配置 lvm，添加相关配置选项，不过过程较为繁琐一点，至于如何手动配置笔者没有尝试，不过本文附加了相关部署的参考文章，有需求的可以看看，这里只介绍使用 =docker-storage-setup= 配置 direct-lvm。
 
@@ -154,5 +154,5 @@ Storage Driver: devicemapper
   - [[https://access.redhat.com/articles/1492923][Managing Storage with Docker Formatted Containers on Red Hat Enterprise Linux and Red Hat Enterprise Linux Atomic Host]]
   - [[http://www.projectatomic.io/blog/2015/06/notes-on-fedora-centos-and-docker-storage-drivers/][Friends Don't Let Friends Run Docker on Loopback in Production]]
   - [[https://ekuric.wordpress.com/2015/07/17/docker-storage-setup/][docker-storage-setup]]
-  - [[http://unpoucode.blogspot.hk/2015/06/docker-and-devicemappers-thinpool-in。html][Docker and devicemapper`s thinpool in RHEL 7]]
+  - [[http://unpoucode.blogspot.hk/2015/06/docker-and-devicemappers-thinpool-in.html][Docker and devicemapper`s thinpool in RHEL 7]]
   - [[http://www.projectatomic.io/docs/docker-storage-recommendation/][Setting Up Storage]]

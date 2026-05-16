@@ -454,7 +454,7 @@ spec:
 | peerIP | The IP address of this peer                                                   | Valid IPv4 or IPv6 address.                            | string |
 
 #+BEGIN_QUOTE
-此处 node 官档标明为主机名，另外实际测试中如果此处指定 calico node 启动时指定的节点名「非主机名」时，跨容器路由会有问题，所以此处必须标注为主机名。
+此处 node 官方文档标明为主机名，另外实际测试中如果此处指定 calico node 启动时指定的节点名「非主机名」时，跨容器路由会有问题，所以此处必须标注为主机名。
 #+END_QUOTE
 
 关于 BGP 的一些术语：

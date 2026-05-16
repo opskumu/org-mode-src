@@ -135,7 +135,7 @@
 - [[https://github.com/opskumu/issues/issues/19][2018 遇到的问题集锦]]
 - [[https://github.com/opskumu/issues/issues/23][2019 遇到的问题集锦]]
 
-以上是这两年遇到的一些关于 K8s 问题的碎片化记录，大部分的问题都记录了，感兴趣的可以看点击查看。这里说一些使用 K8s 构建容器平台遇到的一些典型的问题：
+以上是这两年遇到的一些关于 K8s 问题的碎片化记录，大部分的问题都记录了，感兴趣的可以点击查看。这里说一些使用 K8s 构建容器平台遇到的一些典型的问题：
 
 *** Kubernetes DNS 解析偶尔丢包 5s 延迟问题
 
@@ -161,7 +161,7 @@ https://opskumu.oss-cn-beijing.aliyuncs.com/images/nodelocal-HA.png
 
 正常情况下，如果一个容器运行一个进程，那么不太可能出现僵尸进程的问题。对于内部的 Java 程序是没有这个问题的，我们一个容器就跑一个程序，但是有些应用很多都是跑的多进程的（比如 Jenkins slave 构建容器），这类情况下就可能会出现僵尸进程。众所周知，容器不像操作系统，正常情况下它是没有 init 进程的，PID 为 1 的一般是应用本身，而普通进程一般是不会捕获僵尸进程的，这就导致了有些多进程容器中出现 N 多的僵尸进程。
 
-docker 1.13.x 之后支持 =--init= 选项（集成 [[https://github.com/krallin/tini][tini]]），但是 K8s 本身是不支持 =--init= 项的，不过我们可以在镜像中加入 [[https://github.com/krallin/tini][tini]] 或 [[https://github.com/Yelp/dumb-init][dumb-init]] 实现，范例如下（详细建议阅读官方 guied）：
+docker 1.13.x 之后支持 =--init= 选项（集成 [[https://github.com/krallin/tini][tini]]），但是 K8s 本身是不支持 =--init= 项的，不过我们可以在镜像中加入 [[https://github.com/krallin/tini][tini]] 或 [[https://github.com/Yelp/dumb-init][dumb-init]] 实现，范例如下（详细建议阅读官方 guide）：
 
 #+BEGIN_SRC 
 # Add Tini
@@ -195,7 +195,7 @@ CMD ["/my/script", "--with", "--args"]
 The better metric is container_memory_working_set_bytes as this is what the OOM killer is watching for.
 #+END_SRC
 
-简而言之，OOM Killer 评判的值就是 =container_memory_working_set_bytes= ，可是实际对比发现，有些 Java 容器实际的内存占用和 =container_memory_working_set_bytes= 相差甚远，很多该值是 90%+ 的，实际使用 ps 工具查看确只占用 50% 或更低。最后我们是通过 =container_memory_usage_bytes - container_memory_cache= 计算容器内存占用，相比 working_set 要准确多了。至于最后为什么使用这个计算，时间跨度有点长了，当时也没有记录，记得除了查资料之外还看了 docker stats 这块的源码。
+简而言之，OOM Killer 评判的值就是 =container_memory_working_set_bytes= ，可是实际对比发现，有些 Java 容器实际的内存占用和 =container_memory_working_set_bytes= 相差甚远，很多该值是 90%+ 的，实际使用 ps 工具查看却只占用 50% 或更低。最后我们是通过 =container_memory_usage_bytes - container_memory_cache= 计算容器内存占用，相比 working_set 要准确多了。至于最后为什么使用这个计算，时间跨度有点长了，当时也没有记录，记得除了查资料之外还看了 docker stats 这块的源码。
 
 *** Calico CNI 网络 IP 没有正常回收的问题
 

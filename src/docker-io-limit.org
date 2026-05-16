@@ -93,7 +93,7 @@ sys     0m0.480s
 root@6778b6b39686:/#
 #+END_SRC
 
-测试下来，效果不是很理想，没有获得官档的效果，类似的问题可以在相关的 issue 上找到，如 [[https://github.com/docker/docker/issues/16173][--blkio-weight doesn't take effect in docker Docker version 1.8.1 #16173]]
+测试下来，效果不是很理想，没有获得官方文档中的效果，类似的问题可以在相关的 issue 上找到，如 [[https://github.com/docker/docker/issues/16173][--blkio-weight doesn't take effect in docker Docker version 1.8.1 #16173]]
 
 官方的测试说明是：
 

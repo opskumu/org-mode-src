@@ -80,7 +80,7 @@ service etcd start
 
 1.7 版本是针对安全、有状态服务以及可扩展功能里程碑版本，[[https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.7.md#major-themes][1.7.0 Major Themes]]。
 
-根据文档 [[https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.7.md#action-required-before-upgrading][Action Required Before Upgrading]] 描述，如果你之前使用过 NetwokPolicy，可以参考 [[https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.7.md#network][Network]] 说明，其它版本选项没有大的变动。
+根据文档 [[https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.7.md#action-required-before-upgrading][Action Required Before Upgrading]] 描述，如果你之前使用过 NetworkPolicy，可以参考 [[https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.7.md#network][Network]] 说明，其它版本选项没有大的变动。
 
 ** 1.7.x --> 1.8.x
 

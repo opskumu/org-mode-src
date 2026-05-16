@@ -8,7 +8,7 @@
 
 如上图，这是一个典型的 Kubernetes 集群组件图，通过上图我们可以看到 Kubernetes 各组件都是以 APIServer 作为网关通信的。为了安全，APIServer 一般通过 TLS 认证对外暴露，集群组件若要访问 APIServer 则需要相应的 TLS 证书。
 
-下图为 APIserver 的控制访问过程，完整的访问控制需要经过 =认证= 、 =授权= 以及 =准入控制= 三个模块，图中 4 表示 APIServer 访问 ETCD 集群，同样也是采用 TLS 认证的。
+下图为 APIServer 的控制访问过程，完整的访问控制需要经过 =认证= 、 =授权= 以及 =准入控制= 三个模块，图中 4 表示 APIServer 访问 ETCD 集群，同样也是采用 TLS 认证的。
 
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/access-control-overview.png]]
 
@@ -18,7 +18,7 @@
 
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/kubernetes-authentication.png]]
 
-这里我们会着重介绍 TLS 认证方式，准入控制可以参考之前写的文章[[https://blog.opskumu.com/kubernetes-mutating-webhook.html][自定义 Kubernetes 准入控制器]]，其他认证方式详情可以参见 [[https://kubernetes.io/docs/reference/access-authn-authz/authentication/][Authenticating | Kubernetes。]]
+这里我们会着重介绍 TLS 认证方式，准入控制可以参考之前写的文章[[https://blog.opskumu.com/kubernetes-mutating-webhook.html][自定义 Kubernetes 准入控制器]]，其他认证方式详情可以参见 [[https://kubernetes.io/docs/reference/access-authn-authz/authentication/][Authenticating | Kubernetes]]。
 
 ** TLS 双向认证
 
@@ -53,7 +53,7 @@ kube-apiserver 涉及到的证书选项很多，以下为梳理之后的证书�
 
 ** RBAC
 
-以上主要介绍 TLS 认证，认证之后我们如何在认证基础上针对资源授权管理呢？这里就要介绍到 RBAC 机制。RBAC，字面意思就是基于角色的权限访问控制。Kubernetes 中的 RBAC 主要涉及到上面提到的 ClusterRole/ClusterRoleBinding/Role/RoleBinding 的资源，其中 ClusterRole/ClusterRolebinding 是全局的角色，Role/RoleBind 是针对 namespace 级别的角色。Role 是对用户拥有权限的抽象，RoleBinding 将角色绑定到用户（User）、组（Group）或者服务账户（Service Account）。下图更为形象的展示了对应关系：
+以上主要介绍 TLS 认证，认证之后我们如何在认证基础上针对资源授权管理呢？这里就要介绍到 RBAC 机制。RBAC，字面意思就是基于角色的权限访问控制。Kubernetes 中的 RBAC 主要涉及到上面提到的 ClusterRole/ClusterRoleBinding/Role/RoleBinding 的资源，其中 ClusterRole/ClusterRoleBinding 是全局的角色，Role/RoleBinding 是针对 namespace 级别的角色。Role 是对用户拥有权限的抽象，RoleBinding 将角色绑定到用户（User）、组（Group）或者服务账户（Service Account）。下图更为形象的展示了对应关系：
 
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/role-binding.png]]
 
@@ -98,7 +98,7 @@ subjects:
   namespace: kube-system
 #+end_src
 
-ClusterRoleBinding 中 subjects 则定义了 ServiceAccount 以及对应的空间（subjects 还可以是组或者 Service Account，其中组对应 TLS 证书中的 O 字段）。上文提过证书中的 =CN= 和 =O= 作为用户和组标识字段，ClusterRoleBinding/RoleBinding 关联 ClusterRole/Role 和 subjects，在只定义 ServiceAccount 的情况下，CN 要生效，可以加上 =system:serviceaccount:= 前缀，如 CoreDNS 的例子，如要 TLS 方式访问，可以配置 CN 为 =system:serviceaccount:coredns= ，详情可以参见 [[https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-subjects][Using RBAC Authorization ]]。
+ClusterRoleBinding 中 subjects 则定义了 ServiceAccount 以及对应的空间（subjects 还可以是组或者 Service Account，其中组对应 TLS 证书中的 O 字段）。上文提过证书中的 =CN= 和 =O= 作为用户和组标识字段，ClusterRoleBinding/RoleBinding 关联 ClusterRole/Role 和 subjects，在只定义 ServiceAccount 的情况下，CN 要生效，可以加上 =system:serviceaccount:= 前缀，如 CoreDNS 的例子，如要 TLS 方式访问，可以配置 CN 为 =system:serviceaccount:coredns= ，详情可以参见 [[https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-subjects][Using RBAC Authorization]]。
 
 ** TLS bootstrapping
 
@@ -108,7 +108,7 @@ ClusterRoleBinding 中 subjects 则定义了 ServiceAccount 以及对应的空�
 
 图摘自 [[https://medium.com/@toddrosner/kubernetes-tls-bootstrapping-cf203776abc7][Kubernetes TLS bootstrapping]]
 
-上图流程简单说就是，kubelet 启动时首先会去寻找 kubeconfig 文件，当 kubeconfig 文件存在，则且在启动的时候利用 kubeconfig 直接加入集群。如果 kubeconfig 不存在，kubelet 使用 bootstrap.kubeconfig 文件建立认证请求，通过 bootstrapping 机制签发证书然会自动创建 kubeconfig 文件，加入到集群。详细的流程参考 [[https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet-tls-bootstrapping/#bootstrap-initialization][TLS bootstrapping | Kubernetes]]，其中生成的证书会检查有效期，在有效期快到期的时候会重新签注证书。
+上图流程简单说就是，kubelet 启动时首先会去寻找 kubeconfig 文件，当 kubeconfig 文件存在，则在启动的时候利用 kubeconfig 直接加入集群。如果 kubeconfig 不存在，kubelet 使用 bootstrap.kubeconfig 文件建立认证请求，通过 bootstrapping 机制签发证书，然后自动创建 kubeconfig 文件，加入到集群。详细的流程参考 [[https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet-tls-bootstrapping/#bootstrap-initialization][TLS bootstrapping | Kubernetes]]，其中生成的证书会检查有效期，在有效期快到期的时候会重新签发证书。
 
 Kubelet 要启用 TLS bootstrapping，需要开启选项 =--bootstrap-kubeconfig= ，我们可以看下 bootstrap.kubeconfig 的一个示例配置内容：
 
@@ -136,7 +136,7 @@ token: 50bc4305185c3c2d8e31cab9223a8107 # APIServer 定义的 bootstrap token
 
 ** Node Authorization
 
-我们知道 TLS bootstrapping 主要针对的是 kubelet 的证书自动签注认证的，Node Authorization 是专门针对 kubelet API 请求授权的特殊授权。节点授权允许 Kubelet 有以下 API 操作权限：
+我们知道 TLS bootstrapping 主要针对的是 kubelet 的证书自动签发认证的，Node Authorization 是专门针对 kubelet API 请求授权的特殊授权。节点授权允许 Kubelet 有以下 API 操作权限：
 
 - 读操作
   - services

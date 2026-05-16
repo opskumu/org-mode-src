@@ -250,7 +250,7 @@ cAdvisor 启动 container manager，通过调用 Linux 系统 inotify 监测 cgr
 
 *** Getprocesslist
 
-cAdvisor 首先判断自己是否运行在 container 中，如果是则 =chroot /rootfs= （cAdvisor 在 container 中运行会通过 volume 方式把系统 / mount 到 /rootfs 下）再执行 =ps -e -o user,pid,ppid,stime,pcpu,pmem,rss,vsz,stat,time,comm,cgrou= ，否则直接执行获取。(github.com/google/cadvisor/manager/container.go GetProcessList() 函数实现)
+cAdvisor 首先判断自己是否运行在 container 中，如果是则 =chroot /rootfs= （cAdvisor 在 container 中运行会通过 volume 方式把系统 / mount 到 /rootfs 下）再执行 =ps -e -o user,pid,ppid,stime,pcpu,pmem,rss,vsz,stat,time,comm,cgroup= ，否则直接执行获取。(github.com/google/cadvisor/manager/container.go GetProcessList() 函数实现)
 
 #+BEGIN_SRC
 # github.com/google/cadvisor/manager/manager.go

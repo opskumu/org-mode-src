@@ -115,7 +115,7 @@ cgroups 实现了对资源的配额和度量。 cgroups 的使用非常简单，
 
 ** Docker 安装
 
-docker 的相关安装方法这里不作介绍，具体安装参考 [[https://docs.docker.com/installation/][官档]]
+docker 的相关安装方法这里不作介绍，具体安装参考 [[https://docs.docker.com/installation/][官方文档]]
 
 获取当前 docker 版本
 
@@ -207,7 +207,7 @@ Commands:
     kill      Kill a running container                      # kill 指定 docker 容器
     load      Load an image from a tar archive              # 从一个 tar 包中加载一个镜像[对应 save]
     login     Register or Login to the docker registry server
-              # 注册或者登陆一个 docker 源服务器
+              # 注册或者登录一个 docker 源服务器
     logout    Log out from a Docker registry server         # 从当前 Docker registry 退出
     logs      Fetch the logs of a container                 # 输出当前容器日志信息
     port      Lookup the public-facing port which is NAT-ed to PRIVATE_PORT
