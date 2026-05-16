@@ -41,22 +41,6 @@
     (setq escaped (replace-regexp-in-string "<" "&lt;" escaped t t))
     (replace-regexp-in-string ">" "&gt;" escaped t t)))
 
-(defun opskumu-org--paper-ref-export (path _description backend _info)
-  "Export paper-style reference PATH as a compact superscript citation."
-  (let* ((refs (split-string (or path "") "[,;[:space:]]+" t))
-         (label (mapconcat #'identity refs ", ")))
-    (if (org-export-derived-backend-p backend 'html)
-        (concat
-         "<sup class=\"paper-ref\">"
-         (mapconcat
-          (lambda (ref)
-            (let ((escaped (opskumu-org--html-escape ref)))
-              (concat "<a href=\"#ref-" escaped "\">" escaped "</a>")))
-          refs
-          ", ")
-         "</sup>")
-      (concat "[" label "]"))))
-
 (defun opskumu-org--current-page-url ()
   "Return the canonical URL for the Org file currently being exported."
   (let* ((file (buffer-file-name))
@@ -233,7 +217,6 @@ Helps `emacs --batch' find htmlize without a full interactive init."
 (defun opskumu-org--init-export-settings ()
   "Match `tpls/.spacemacs' + safe fallback when ELPA htmlize is missing in batch."
   (require 'ox-html)
-  (org-link-set-parameters "paperref" :export #'opskumu-org--paper-ref-export)
   (setq org-html-html5-fancy t
         org-html-doctype "html5"
         org-html-validation-link nil
