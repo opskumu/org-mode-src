@@ -1,0 +1,27 @@
+src/index.org
+  s_de9a9178095997::t_bf074a8b8d7065 7
+scripts/publish.el
+  s_de9a9178095997::t_49eaaf2632212b 34,38
+  s_de9a9178095997::t_4d42ef67ea3855 30-31,190,202,685-686
+static/js/site.js
+  s_de9a9178095997::t_ef7befbc3e4df5 158,162
+  s_de9a9178095997::t_ad3c607f237557 5-6,10-11,147
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "209d7c6517597b78a7bdc656de24a8870c86036e",
+  "prompts": {},
+  "sessions": {
+    "s_de9a9178095997": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f92c3-dd20-7f32-acac-fd6a6270f04c",
+        "model": "unknown"
+      },
+      "human_author": "opskumu <opskumu@gmail.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
