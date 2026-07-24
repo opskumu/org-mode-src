@@ -1,0 +1,23 @@
+scripts/publish.el
+  s_de9a9178095997::t_49eaaf2632212b 34,38
+static/js/site.js
+  s_de9a9178095997::t_ef7befbc3e4df5 158,162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7d7697e680814f15bb395664cb1bb30beef48074",
+  "prompts": {},
+  "sessions": {
+    "s_de9a9178095997": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f92c3-dd20-7f32-acac-fd6a6270f04c",
+        "model": "unknown"
+      },
+      "human_author": "opskumu <opskumu@gmail.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
