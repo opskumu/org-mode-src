@@ -27,15 +27,15 @@
 
 (defconst opskumu-org--chrome-html
   (concat
-   "<a class=\"skip-link\" href=\"#content\">跳到主要内容</a>"
-   "<nav class=\"navbar\" role=\"navigation\" aria-label=\"主导航\">"
+   "<a class=\"skip-link\" href=\"#content\">Skip to main content</a>"
+   "<nav class=\"navbar\" role=\"navigation\" aria-label=\"Primary\">"
    "<a class=\"navbar-brand\" href=\"index.html\">Kumu's Blog</a>"
    "<div class=\"navbar-links\">"
-   "<a href=\"index.html\" data-nav=\"blog\">博客</a>"
+   "<a href=\"index.html\" data-nav=\"blog\">Blog</a>"
    "<a href=\"https://wiki.opskumu.com\" target=\"_blank\" rel=\"noopener noreferrer\">Wiki</a>"
    "<a href=\"https://github.com/opskumu/issues\" target=\"_blank\" rel=\"noopener noreferrer\">Issues</a>"
    "<a href=\"https://github.com/opskumu\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub</a>"
-   "<a href=\"https://opskumu.com/\" target=\"_blank\" rel=\"noopener noreferrer\">关于</a>"
+   "<a href=\"https://opskumu.com/\" target=\"_blank\" rel=\"noopener noreferrer\">About</a>"
    "</div>"
    "</nav>")
   "Static page chrome emitted by Org export before JavaScript enhancements.")
@@ -187,7 +187,7 @@ the blog export should use the same stable anchors instead of generated ids."
           (when older
             (setq links (concat links (opskumu-org--article-nav-link older "older" "下一篇"))))
           (unless (string-empty-p links)
-            (concat "<nav class=\"article-nav\" aria-label=\"文章导航\">"
+            (concat "<nav class=\"article-nav\" aria-label=\"Article navigation\">"
                     links
                     "</nav>")))))))
 
@@ -199,7 +199,7 @@ the blog export should use the same stable anchors instead of generated ids."
     (when older
       (setq links (concat links (opskumu-org--article-nav-link older "older" "下一篇"))))
     (unless (string-empty-p links)
-      (concat "<nav class=\"article-nav\" aria-label=\"文章导航\">"
+      (concat "<nav class=\"article-nav\" aria-label=\"Article navigation\">"
               links
               "</nav>"))))
 
@@ -682,8 +682,8 @@ Helps `emacs --batch' find htmlize without a full interactive init."
           ("en" ,opskumu-org--chrome-html))
         org-html-postamble t
         org-html-postamble-format
-        '(("zh-CN" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\">由 <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + <a href=\"https://orgmode.org/\">Org</a> 生成</span>")
-          ("en" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\">由 <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + <a href=\"https://orgmode.org/\">Org</a> 生成</span>")))
+        '(("zh-CN" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\">Generated with <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + <a href=\"https://orgmode.org/\">Org</a></span>")
+          ("en" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\">Generated with <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + <a href=\"https://orgmode.org/\">Org</a></span>")))
   (add-to-list 'org-export-filter-final-output-functions
                #'opskumu-org--inject-head-metadata)
   ;; `htmlize' is required when `org-html-htmlize-output-type' is `css';

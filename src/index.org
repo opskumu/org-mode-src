@@ -4,7 +4,7 @@
 #+DESCRIPTION: Kumu 的个人博客，记录 Kubernetes、Linux、Emacs、容器与工程实践。
 #+OPTIONS: toc:nil num:nil 
 
-* 归档
+* Archive
 
 ------
 
