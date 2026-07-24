@@ -1,6 +1,6 @@
 #+TITLE: 2016，小结
 #+SETUPFILE: ../tpls/tpl.org
-#+DATE: <2016-01-01 Fri>
+#+DATE: <2017-01-01 Sun>
 
 ** 关于读书
 

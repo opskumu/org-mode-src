@@ -141,7 +141,7 @@
 
 从 2017 年平台上线之后，偶尔业务出现 DNS 请求超过 5s 的问题困扰了我很久。这个问题在社区 Issue [[https://github.com/kubernetes/kubernetes/issues/56903][DNS intermittent delays of 5s]] 也讨论了很长一段时间，跨度为两年之久，直到现在虽然 Issue 已经关闭，底下时常还有一些讨论。Issue 中很清楚的描述了问题产生的原因，是内核 conntrack 模块本身的 bug。那如何解决呢，Issue 中也提到了很多方法，试过其中的大多数方式，有些并没有解决。其中除了升级内核，个人最建议的方式还是使用 [[https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns][Nodelocal DNS Cache]] 去解决这个问题，但是它也有一个问题，就是每次升级组件的时候，所在主机的 DNS 就会中断。
 
-[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/nodelocal-dns-cache.png]] 
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/nodelocal-dns-cache.png]]
 
 关于 Nodelocal DNS Cache [[https://github.com/kubernetes/enhancements/blob/master/keps/sig-network/20190424-NodeLocalDNS-beta-proposal.md][Graduate NodeLocal DNSCache to beta]] 更好的解决方案，在现有的基础上无需改动即可生效，而且可以规避 DNS Cache 组件更新所在节点 DNS 请求中断的问题，不过到目前还没有实现。
 

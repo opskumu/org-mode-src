@@ -1,9 +1,10 @@
 #+TITLE: Kumu's Blog
 #+SETUPFILE: ../tpls/tpl.org
-#+DATE: <2021-02-16 Tue>
+#+DATE: <2024-01-02 Tue>
+#+DESCRIPTION: Kumu 的个人博客，记录 Kubernetes、Linux、Emacs、容器与工程实践。
 #+OPTIONS: toc:nil num:nil 
 
-* Archive
+* 归档
 
 ------
 
@@ -28,7 +29,7 @@
 
 ** 2020
 
-- 2020-06-10 [[file:client-go-under-the-hood.org][client-go 背后机制]]
+- 2020-06-10 [[file:client-go-under-the-hood.org][client-go 背后机制「译」]]
 - 2020-02-03 [[file:how-k8s-ingress-works.org][Nginx Ingress 控制器工作机制]]
 - 2020-01-20 [[file:kubernetes-ext-service.org][Kubernetes 外部服务映射]]
 - 2020-01-01 [[file:bye-2019.org][2019，小结]]
@@ -94,7 +95,7 @@
 - 2015-05-03 [[file:kvm-ulimits.org][KVM 进程 ulimit 设置未生效]]
 - 2015-04-08 [[file:software-tips.org][软件开发者路线图摘要]]
 - 2015-01-26 [[file:bye-2014.org][2014，小结]]
-- 2015-01-14 [[file:mysql-blob.org][MySQL 大字段溢出数据回写失败]]
+- 2015-01-14 [[file:mysql-blob.org][MySQL 大字段溢出导致数据回写失败]]
 - 2015-01-09 [[file:rsync.org][rsync 备份备忘]]
 
 ** 2014

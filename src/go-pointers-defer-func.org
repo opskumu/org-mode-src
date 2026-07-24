@@ -1,6 +1,6 @@
 #+SETUPFILE: ../tpls/tpl.org
 #+TITLE: Go 指针、defer、匿名函数
-#+DATE: <2019-04-20 Sat>
+#+DATE: <2016-04-20 Wed>
 
 ** Go 指针
 
