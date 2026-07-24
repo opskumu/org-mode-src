@@ -1,0 +1,49 @@
+README.md
+  s_de9a9178095997::t_ac63deacd9f2e6 9-10,14,17-18,20-29
+src/bye-2015.org
+  s_de9a9178095997::t_ac929eb5252d84 3
+src/bye-2016.org
+  s_de9a9178095997::t_d9a4b499e0cc78 3
+src/go-pointers-defer-func.org
+  s_de9a9178095997::t_6ecac9de1222fa 3
+src/index.org
+  s_de9a9178095997::t_bf074a8b8d7065 3-4,7,32,98
+src/kafka-on-the-shore.org
+  s_de9a9178095997::t_c22073daa78a69 3
+src/persistence.org
+  s_de9a9178095997::t_42b8c6a9746638 5
+src/slow-down.org
+  s_de9a9178095997::t_190dcee794723b 3
+src/wacai-docker.org
+  s_de9a9178095997::t_dce08162db968f 144
+static/.nojekyll
+  s_de9a9178095997::t_f5ad70b4b9fedf 1
+static/CNAME
+  s_de9a9178095997::t_1630d9762e4e95 1
+static/js/site.js
+  s_de9a9178095997::t_ad3c607f237557 5-6,10-11,147,158,162,230-236,258-265
+static/robots.txt
+  s_de9a9178095997::t_13358ea9eb67c1 1-4
+tpls/.spacemacs
+  s_de9a9178095997::t_5e257f535d71a9 2,4-5,9-12,14,16-17
+tpls/tpl.org
+  s_de9a9178095997::t_2674e1c92b9c53 3,11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "de3f2208b439e995a47b3e251a8e076d7a60cc7f",
+  "prompts": {},
+  "sessions": {
+    "s_de9a9178095997": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f92c3-dd20-7f32-acac-fd6a6270f04c",
+        "model": "unknown"
+      },
+      "human_author": "opskumu <opskumu@gmail.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
