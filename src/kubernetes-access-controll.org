@@ -1,7 +1,10 @@
 #+SETUPFILE: ../tpls/tpl.org
 #+TITLE: Kubernetes 访问控制
 #+DATE: <2021-03-31 Wed>
+#+DESCRIPTION: 介绍 Kubernetes API Server 的 TLS 双向认证、RBAC 授权、TLS bootstrapping 与 Node Authorization 访问控制机制。
 
+#+CAPTION: Kubernetes 集群控制面与节点组件
+#+ATTR_HTML: :alt Kubernetes 集群控制面与节点组件
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/components-of-kubernetes.png]]
 
 图摘自 [[https://kubernetes.io/docs/concepts/overview/components/][Kubernetes Components | Kubernetes]]
@@ -10,12 +13,16 @@
 
 下图为 APIServer 的控制访问过程，完整的访问控制需要经过 =认证= 、 =授权= 以及 =准入控制= 三个模块，图中 4 表示 APIServer 访问 ETCD 集群，同样也是采用 TLS 认证的。
 
+#+CAPTION: Kubernetes API 请求的访问控制流程
+#+ATTR_HTML: :alt Kubernetes API 请求的访问控制流程
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/access-control-overview.png]]
 
 图摘自 [[https://kubernetes.io/docs/concepts/security/controlling-access/][Controlling Access to the Kubernetes API | Kubernetes]]
 
 这里要说明的是，APIServer 本身支持多种认证方式，并不只是 TLS 一种，默认我们使用 TLS 认证（可以启用多种认证方式）。目前 APIServer 支持以下认证方式：
 
+#+CAPTION: Kubernetes API 支持的认证方式
+#+ATTR_HTML: :alt Kubernetes API 支持的认证方式
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/kubernetes-authentication.png]]
 
 这里我们会着重介绍 TLS 认证方式，准入控制可以参考之前写的文章[[https://blog.opskumu.com/kubernetes-mutating-webhook.html][自定义 Kubernetes 准入控制器]]，其他认证方式详情可以参见 [[https://kubernetes.io/docs/reference/access-authn-authz/authentication/][Authenticating | Kubernetes]]。
@@ -26,6 +33,8 @@ TLS 是安全传输层协议，包括两部分：TLS 记录协议和 TLS 握手�
 
 APIServer 和集群组件通信使用 TLS 双向认证，顾名思义，客户端和服务器端都需要验证对方的身份，相比单向认证，双向认证客户端除了需要从服务器端下载服务器的公钥证书进行验证外，还需要把客户端的公钥证书上传到服务器端给服务器端进行验证，等双方都认证通过了，才开始建立安全通信通道进行数据传输，具体流程如下：
 
+#+CAPTION: TLS 双向认证握手流程
+#+ATTR_HTML: :alt TLS 双向认证握手流程
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/mutual-ssl.png]]
 
 图摘自 [[https://www.codeproject.com/Articles/326574/An-Introduction-to-Mutual-SSL-Authentication][An Introduction to Mutual SSL Authentication - CodeProject]]
@@ -55,8 +64,12 @@ kube-apiserver 涉及到的证书选项很多，以下为梳理之后的证书�
 
 以上主要介绍 TLS 认证，认证之后我们如何在认证基础上针对资源授权管理呢？这里就要介绍到 RBAC 机制。RBAC，字面意思就是基于角色的权限访问控制。Kubernetes 中的 RBAC 主要涉及到上面提到的 ClusterRole/ClusterRoleBinding/Role/RoleBinding 的资源，其中 ClusterRole/ClusterRoleBinding 是全局的角色，Role/RoleBinding 是针对 namespace 级别的角色。Role 是对用户拥有权限的抽象，RoleBinding 将角色绑定到用户（User）、组（Group）或者服务账户（Service Account）。下图更为形象的展示了对应关系：
 
+#+CAPTION: RoleBinding 在命名空间内关联角色与主体
+#+ATTR_HTML: :alt RoleBinding 在命名空间内关联角色与主体
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/role-binding.png]]
 
+#+CAPTION: ClusterRoleBinding 在集群范围关联角色与主体
+#+ATTR_HTML: :alt ClusterRoleBinding 在集群范围关联角色与主体
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/cluster-role-binding.png]]
 
 图摘自 [[https://www.cncf.io/blog/2020/08/28/kubernetes-rbac-101-authorization/][Kubernetes RBAC 101: authorization | Cloud Native Computing Foundation (cncf.io)]]
@@ -104,6 +117,8 @@ ClusterRoleBinding 中 subjects 则定义了 ServiceAccount 以及对应的空�
 
 前文已经提了，之所以使用 TLS 认证是为了集群间通信安全目的。正常情况下，我们在扩缩容节点的时候需要手动给对应的节点签发证书，这会增加一些额外的工作。Kubernetes 从 1.4 开始引入了证书请求和签名 API 简化了这一流程，也就是我们这里要说的 TLS bootstrapping。下图展示了 TLS bootstrapping 的工作流程：
 
+#+CAPTION: Kubelet TLS bootstrapping 工作流程
+#+ATTR_HTML: :alt Kubelet TLS bootstrapping 工作流程
 [[https://opskumu.oss-cn-beijing.aliyuncs.com/images/bootstrapping-workflow.png]]
 
 图摘自 [[https://medium.com/@toddrosner/kubernetes-tls-bootstrapping-cf203776abc7][Kubernetes TLS bootstrapping]]

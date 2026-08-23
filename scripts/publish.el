@@ -27,8 +27,8 @@
 
 (defconst opskumu-org--chrome-html
   (concat
-   "<a class=\"skip-link\" href=\"#content\">Skip to main content</a>"
-   "<nav class=\"navbar\" role=\"navigation\" aria-label=\"Primary\">"
+   "<a class=\"skip-link\" href=\"#content\">跳到正文</a>"
+   "<nav class=\"navbar\" role=\"navigation\" aria-label=\"主导航\">"
    "<a class=\"navbar-brand\" href=\"index.html\">Kumu's Blog</a>"
    "<div class=\"navbar-links\">"
    "<a href=\"index.html\" data-nav=\"blog\">Blog</a>"
@@ -103,9 +103,9 @@ the blog export should use the same stable anchors instead of generated ids."
                nil t)
           (string-trim (match-string 1)))))))
 
-(defun opskumu-org--source-date (file)
-  "Return FILE's YYYY-MM-DD Org date."
-  (let ((raw (opskumu-org--source-keyword file "DATE")))
+(defun opskumu-org--source-date (file &optional keyword)
+  "Return FILE's YYYY-MM-DD Org date from KEYWORD, defaulting to DATE."
+  (let ((raw (opskumu-org--source-keyword file (or keyword "DATE"))))
     (when (and raw
                (string-match
                 "\\([0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\)"
@@ -461,7 +461,7 @@ the blog export should use the same stable anchors instead of generated ids."
         (setq start paragraph-end)
         (when (and (>= (length candidate) 50)
                    (not (string-match-p
-                         "\\`图\\(?:摘自\\|片\\)"
+                         "\\`\\(?:图\\(?:摘自\\|片\\|中\\)\\|如[上下]?图\\|[上下]图\\)"
                          candidate)))
           (setq description candidate))))
     (when description
@@ -487,6 +487,39 @@ the blog export should use the same stable anchors instead of generated ids."
         (concat opskumu-org--site-url
                 (replace-regexp-in-string "\\`\\./" "" src))))))
 
+(defun opskumu-org--json-ld-html
+    (title description url is-index published modified image)
+  "Return JSON-LD script HTML for the current page metadata."
+  (require 'json)
+  (let* ((author '(("@type" . "Person")
+                   ("name" . "Kumu")
+                   ("url" . "https://opskumu.com/")))
+         (schema
+          (if is-index
+              `(("@context" . "https://schema.org")
+                ("@type" . "Blog")
+                ("name" . ,title)
+                ("description" . ,description)
+                ("url" . ,url)
+                ("inLanguage" . "zh-CN")
+                ("author" . ,author))
+            `(("@context" . "https://schema.org")
+              ("@type" . "BlogPosting")
+              ("headline" . ,title)
+              ("description" . ,description)
+              ("url" . ,url)
+              ("mainEntityOfPage" . ,url)
+              ("inLanguage" . "zh-CN")
+              ("datePublished" . ,published)
+              ("dateModified" . ,modified)
+              ("author" . ,author)
+              ("publisher" . ,author)
+              ,@(when image `(("image" . ,image))))))
+         (json (json-encode schema)))
+    (concat "<script type=\"application/ld+json\">"
+            (replace-regexp-in-string "</" "<\\/" json t t)
+            "</script>\n")))
+
 (defun opskumu-org--inject-head-metadata (html backend _info)
   "Add crawler-visible canonical and social metadata to exported HTML."
   (if (not (org-export-derived-backend-p backend 'html))
@@ -503,6 +536,11 @@ the blog export should use the same stable anchors instead of generated ids."
            (published (and (not is-index)
                            (buffer-file-name)
                            (opskumu-org--source-date (buffer-file-name))))
+           (modified (and (not is-index)
+                          (buffer-file-name)
+                          (or (opskumu-org--source-date
+                               (buffer-file-name) "UPDATED")
+                              published)))
            (image (opskumu-org--first-image-url html))
            (extra ""))
       (setq html
@@ -527,6 +565,13 @@ the blog export should use the same stable anchors instead of generated ids."
               (concat extra
                       "<meta property=\"article:published_time\" content=\""
                       published "T00:00:00+08:00\"/>\n")))
+      (when (and modified
+                 (not (equal modified published))
+                 (not (string-match-p "property=\"article:modified_time\"" html)))
+        (setq extra
+              (concat extra
+                      "<meta property=\"article:modified_time\" content=\""
+                      modified "T00:00:00+08:00\"/>\n")))
       (when (and image (not (string-match-p "property=\"og:image\"" html)))
         (setq extra
               (concat extra "<meta property=\"og:image\" content=\""
@@ -545,6 +590,11 @@ the blog export should use the same stable anchors instead of generated ids."
                       "<link rel=\"alternate\" type=\"application/atom+xml\" "
                       "title=\"Kumu's Blog\" href=\""
                       opskumu-org--site-url "atom.xml\"/>\n")))
+      (unless (string-match-p "type=\"application/ld\\+json\"" html)
+        (setq extra
+              (concat extra
+                      (opskumu-org--json-ld-html
+                       title description url is-index published modified image))))
       (when image
         (setq html
               (replace-regexp-in-string
@@ -682,8 +732,8 @@ Helps `emacs --batch' find htmlize without a full interactive init."
           ("en" ,opskumu-org--chrome-html))
         org-html-postamble t
         org-html-postamble-format
-        '(("zh-CN" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\">Generated with <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + <a href=\"https://orgmode.org/\">Org</a></span>")
-          ("en" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\">Generated with <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + <a href=\"https://orgmode.org/\">Org</a></span>")))
+        '(("zh-CN" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\"><a href=\"atom.xml\">Atom 订阅</a><span class=\"postamble-sep\" aria-hidden=\"true\"> · </span>Generated with <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + <a href=\"https://orgmode.org/\">Org</a></span>")
+          ("en" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\"><a href=\"atom.xml\">Atom feed</a><span class=\"postamble-sep\" aria-hidden=\"true\"> · </span>Generated with <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + <a href=\"https://orgmode.org/\">Org</a></span>")))
   (add-to-list 'org-export-filter-final-output-functions
                #'opskumu-org--inject-head-metadata)
   ;; `htmlize' is required when `org-html-htmlize-output-type' is `css';
