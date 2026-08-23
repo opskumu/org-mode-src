@@ -449,15 +449,20 @@ the blog export should use the same stable anchors instead of generated ids."
 
 (defun opskumu-org--description-from-html (html)
   "Return the first useful paragraph from HTML as a short description."
-  (let ((start (or (string-match "<div id=\"content\"" html) 0))
-        description)
+  (let* ((searchable-html
+         (replace-regexp-in-string
+           "<\\(pre\\|blockquote\\)\\b[^>]*>\\(?:.\\|\n\\)*?</\\1>"
+           " " html))
+         (start (or (string-match "<div id=\"content\"" searchable-html) 0))
+         description)
     (while (and (not description)
                 (string-match
-                 "<p[^>]*>\\(\\(?:.\\|\n\\)*?\\)</p>"
-                 html start))
+                 "<p\\(?:[[:space:]][^>]*\\)?>\\(\\(?:.\\|\n\\)*?\\)</p>"
+                 searchable-html start))
       (let ((paragraph-end (match-end 0))
             (candidate
-             (opskumu-org--decode-html-text (match-string 1 html))))
+             (opskumu-org--decode-html-text
+              (match-string 1 searchable-html))))
         (setq start paragraph-end)
         (when (and (>= (length candidate) 50)
                    (not (string-match-p
