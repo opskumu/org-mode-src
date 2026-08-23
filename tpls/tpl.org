@@ -1,11 +1,11 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/org.css"/>
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/site.css?v=20260823d"/>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/site.css?v=20260823e"/>
 #+HTML_HEAD: <link rel="icon" href="favicon.ico" sizes="any"/>
 #+HTML_HEAD: <meta property="og:site_name" content="Kumu's Blog"/>
 #+HTML_HEAD: <meta property="og:locale" content="zh_CN"/>
 #+HTML_HEAD: <meta name="twitter:card" content="summary"/>
 #+HTML_HEAD: <meta name="theme-color" content="#ffffff"/>
-#+HTML_HEAD: <script defer src="js/site.js?v=20260823d"></script>
+#+HTML_HEAD: <script defer src="js/site.js?v=20260823e"></script>
 #+OPTIONS: html-style:nil
 #+LANGUAGE: zh-CN
 #+DESCRIPTION: Kumu 的个人博客，记录 Kubernetes、Linux、Emacs 与工程实践。
