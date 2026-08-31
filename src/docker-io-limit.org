@@ -46,7 +46,7 @@ Usage:  docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
 
 - =--blkio-weight=
 
-默认，所有的容器对于 IO 操作「block IO bandwidth -- blkio」都拥有相同优先级。可以通过 =--blkio-weight= 修改容器 blkio 权重。 =--blkio-weight= 权重值在 10 ~ 1000 之间。 
+默认，所有的容器对于 IO 操作「block IO bandwidth -- blkio」都拥有相同优先级。可以通过 =--blkio-weight= 修改容器 blkio 权重。 =--blkio-weight= 权重值在 10 ~ 1000 之间。
 
 #+BEGIN_QUOTE
 Note: The blkio weight setting is only available for direct IO.  Buffered IO is not currently supported.

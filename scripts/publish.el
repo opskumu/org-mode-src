@@ -32,6 +32,7 @@
    "<a class=\"navbar-brand\" href=\"index.html\">Kumu's Blog</a>"
    "<div class=\"navbar-links\">"
    "<a href=\"index.html\" data-nav=\"blog\">Blog</a>"
+   "<a href=\"gallery.html\" data-nav=\"images\">Images</a>"
    "<a href=\"https://wiki.opskumu.com\" target=\"_blank\" rel=\"noopener noreferrer\">Wiki</a>"
    "<a href=\"https://github.com/opskumu/issues\" target=\"_blank\" rel=\"noopener noreferrer\">Issues</a>"
    "<a href=\"https://github.com/opskumu\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub</a>"
@@ -629,6 +630,211 @@ the blog export should use the same stable anchors instead of generated ids."
     (setq escaped (replace-regexp-in-string "<" "&lt;" escaped t t))
     (replace-regexp-in-string ">" "&gt;" escaped t t)))
 
+(defun opskumu-org--html-attribute (tag name)
+  "Return decoded NAME attribute from HTML TAG."
+  (when (string-match
+         (format "\\b%s=\"\\([^\"]*\\)\"" (regexp-quote name))
+         tag)
+    (opskumu-org--decode-html-text (match-string 1 tag))))
+
+(defun opskumu-org--gallery-images-from-file (file)
+  "Return image metadata found in exported article FILE."
+  (let (images)
+    (when (file-readable-p file)
+      (with-temp-buffer
+        (insert-file-contents file)
+        (goto-char (point-min))
+        (while (re-search-forward "<img\\([^>]*\\)>" nil t)
+          (let* ((tag (match-string 0))
+                 (src (opskumu-org--html-attribute tag "src"))
+                 (alt (opskumu-org--html-attribute tag "alt"))
+                 (width (opskumu-org--html-attribute tag "width"))
+                 (height (opskumu-org--html-attribute tag "height")))
+            (when (and src (not (string-empty-p src)))
+              (push (list :src src :alt alt :width width :height height)
+                    images))))))
+    (nreverse images)))
+
+(defun opskumu-org--gallery-alt (image title index)
+  "Return useful alt text for IMAGE from TITLE at one-based INDEX."
+  (let* ((src (plist-get image :src))
+         (alt (or (plist-get image :alt) ""))
+         (clean-src (car (split-string src "[?#]")))
+         (filename (file-name-nondirectory clean-src)))
+    (if (or (string-empty-p alt) (string= alt filename))
+        (format "《%s》中的图片 %d" title index)
+      alt)))
+
+(defun opskumu-org--gallery-absolute-url (src)
+  "Return absolute gallery asset URL for SRC."
+  (if (string-match-p "\\`https?://" src)
+      src
+    (concat opskumu-org--site-url
+            (replace-regexp-in-string "\\`\\./" "" src))))
+
+(defun opskumu-org--write-gallery-page (html-dir)
+  "Build a chronological image wall from images in exported blog posts."
+  (require 'json)
+  (let ((entries nil)
+        (year-counts (make-hash-table :test #'equal))
+        (total-images 0)
+        (first-image-src nil))
+    (dolist (post (opskumu-org--archive-posts))
+      (let* ((html-file
+              (expand-file-name (opskumu-org--post-url post) html-dir))
+             (images (opskumu-org--gallery-images-from-file html-file)))
+        (when images
+          (let ((entry (copy-sequence post))
+                (year (substring (plist-get post :date) 0 4)))
+            (setq entry (plist-put entry :images images))
+            (setq total-images (+ total-images (length images)))
+            (puthash year (+ (gethash year year-counts 0) (length images))
+                     year-counts)
+            (unless first-image-src
+              (setq first-image-src (plist-get (car images) :src)))
+            (push entry entries)))))
+    (setq entries (nreverse entries))
+    (let* ((gallery-file (expand-file-name "gallery.html" html-dir))
+           (post-count (length entries))
+           (latest-date (or (plist-get (car entries) :date) "1970-01-01"))
+           (oldest-date
+            (or (plist-get (car (last entries)) :date) latest-date))
+           (description
+            (format "Kumu Blog 文章中的 %d 张图片，按文章发布日期排列。"
+                    total-images))
+           (gallery-url (concat opskumu-org--site-url "gallery.html"))
+           (image-url
+            (and first-image-src
+                 (opskumu-org--gallery-absolute-url first-image-src)))
+           (schema
+            `(("@context" . "https://schema.org")
+              ("@type" . "CollectionPage")
+              ("name" . "图片墙")
+              ("description" . ,description)
+              ("url" . ,gallery-url)
+              ("inLanguage" . "zh-CN")
+              ("numberOfItems" . ,total-images)
+              ("author" . (("@type" . "Person")
+                            ("name" . "Kumu")
+                            ("url" . "https://opskumu.com/")))))
+           (current-year nil)
+           (first-card t))
+      (with-temp-file gallery-file
+        (insert "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n")
+        (insert "<meta charset=\"utf-8\" />\n")
+        (insert "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n")
+        (insert "<title>图片墙 | Kumu's Blog</title>\n")
+        (insert "<meta name=\"author\" content=\"Kumu\" />\n")
+        (insert "<meta name=\"description\" content=\""
+                (opskumu-org--html-escape description) "\" />\n")
+        (insert "<meta name=\"generator\" content=\"Org Mode\" />\n")
+        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/org.css\"/>\n")
+        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260831e\"/>\n")
+        (insert "<link rel=\"icon\" href=\"favicon.ico\" sizes=\"any\"/>\n")
+        (insert "<link rel=\"canonical\" href=\"" gallery-url "\"/>\n")
+        (insert "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Kumu's Blog\" href=\""
+                opskumu-org--site-url "atom.xml\"/>\n")
+        (insert "<meta property=\"og:site_name\" content=\"Kumu's Blog\"/>\n")
+        (insert "<meta property=\"og:locale\" content=\"zh_CN\"/>\n")
+        (insert "<meta property=\"og:title\" content=\"图片墙 | Kumu's Blog\"/>\n")
+        (insert "<meta property=\"og:description\" content=\""
+                (opskumu-org--html-escape description) "\"/>\n")
+        (insert "<meta property=\"og:url\" content=\"" gallery-url "\"/>\n")
+        (insert "<meta property=\"og:type\" content=\"website\"/>\n")
+        (when image-url
+          (insert "<meta property=\"og:image\" content=\""
+                  (opskumu-org--html-escape image-url) "\"/>\n"))
+        (insert "<meta name=\"twitter:card\" content=\"summary_large_image\"/>\n")
+        (insert "<meta name=\"twitter:title\" content=\"图片墙 | Kumu's Blog\"/>\n")
+        (insert "<meta name=\"twitter:description\" content=\""
+                (opskumu-org--html-escape description) "\"/>\n")
+        (when image-url
+          (insert "<meta name=\"twitter:image\" content=\""
+                  (opskumu-org--html-escape image-url) "\"/>\n"))
+        (insert "<meta name=\"theme-color\" content=\"#ffffff\"/>\n")
+        (insert "<script type=\"application/ld+json\">"
+                (replace-regexp-in-string "</" "<\\/" (json-encode schema) t t)
+                "</script>\n")
+        (insert "<script defer src=\"js/site.js?v=20260831e\"></script>\n")
+        (insert "</head>\n<body class=\"gallery-page\">\n")
+        (insert "<div id=\"preamble\" class=\"status\">"
+                opskumu-org--chrome-html "</div>\n")
+        (insert "<main id=\"content\" class=\"content gallery-content\">\n")
+        (insert "<header class=\"gallery-hero\">"
+                "<p class=\"gallery-kicker\">Image index / "
+                oldest-date "—" latest-date "</p>"
+                "<h1 class=\"title\">图片墙</h1>"
+                "<p class=\"gallery-intro\">文章里的 "
+                (number-to-string total-images)
+                " 张图片，按发布日期从近到远排列。</p>"
+                "<p class=\"gallery-summary\"><span>"
+                (number-to-string post-count) " 篇文章</span><span>"
+                (number-to-string (hash-table-count year-counts))
+                " 个年份</span></p></header>\n")
+        (insert "<nav class=\"gallery-years\" aria-label=\"按年份浏览\">")
+        (let ((seen-years (make-hash-table :test #'equal)))
+          (dolist (entry entries)
+            (let ((year (substring (plist-get entry :date) 0 4)))
+              (unless (gethash year seen-years)
+                (puthash year t seen-years)
+                (insert "<a href=\"#year-" year "\"><span>" year
+                        "</span><small>" (number-to-string (gethash year year-counts 0))
+                        " 张</small></a>")))))
+        (insert "</nav>\n<div class=\"gallery-timeline\">\n")
+        (dolist (entry entries)
+          (let* ((date (plist-get entry :date))
+                 (year (substring date 0 4))
+                 (title (plist-get entry :title))
+                 (post-url (opskumu-org--post-url entry))
+                 (images (plist-get entry :images)))
+            (unless (equal year current-year)
+              (when current-year (insert "</section>\n"))
+              (setq current-year year)
+              (insert "<section class=\"gallery-year\" id=\"year-" year
+                      "\" aria-labelledby=\"gallery-year-" year "\">"
+                      "<header class=\"gallery-year-header\"><h2 id=\"gallery-year-"
+                      year "\">" year "</h2><span>"
+                      (number-to-string (gethash year year-counts 0))
+                      " 张图片</span></header>\n"))
+            (insert "<article class=\"gallery-entry\">"
+                    "<header class=\"gallery-entry-header\"><time datetime=\""
+                    date "\">" (replace-regexp-in-string "-" "." date)
+                    "</time><h3><a href=\"" post-url "\">"
+                    (opskumu-org--html-escape title)
+                    "</a></h3><span>" (number-to-string (length images))
+                    " 张</span></header><div class=\"gallery-grid\">\n")
+            (let ((image-index 0))
+              (dolist (image images)
+                (setq image-index (1+ image-index))
+                (let* ((src (plist-get image :src))
+                       (width (plist-get image :width))
+                       (height (plist-get image :height))
+                       (alt (opskumu-org--gallery-alt image title image-index)))
+                  (insert "<figure class=\"gallery-card\">"
+                          "<img src=\"" (opskumu-org--html-escape src)
+                          "\" alt=\"" (opskumu-org--html-escape alt)
+                          "\" decoding=\"async\" loading=\""
+                          (if first-card "eager" "lazy") "\""
+                          (if first-card " fetchpriority=\"high\"" "")
+                          (if (and width height)
+                              (format " width=\"%s\" height=\"%s\"" width height)
+                            "")
+                          "><figcaption><span aria-hidden=\"true\">"
+                          (format "%02d" image-index)
+                          "</span><a href=\"" post-url "\">"
+                          (opskumu-org--html-escape title)
+                          "</a></figcaption></figure>\n")
+                  (setq first-card nil))))
+            (insert "</div></article>\n")))
+        (when current-year (insert "</section>\n"))
+        (insert "</div></main>\n")
+        (insert "<div id=\"postamble\" class=\"status is-compact\">"
+                "<span class=\"creator\"><a href=\"atom.xml\">Atom 订阅</a>"
+                "<span class=\"postamble-sep\" aria-hidden=\"true\"> · </span>"
+                "Generated with <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + "
+                "<a href=\"https://orgmode.org/\">Org</a></span></div>\n")
+        (insert "</body>\n</html>\n")))))
+
 (defun opskumu-org--write-discovery-files (html-dir)
   "Write sitemap.xml and atom.xml into HTML-DIR."
   (let* ((posts (opskumu-org--archive-posts))
@@ -640,6 +846,8 @@ the blog export should use the same stable anchors instead of generated ids."
       (insert "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n")
       (insert "  <url><loc>" opskumu-org--site-url "</loc><lastmod>"
               updated "</lastmod></url>\n")
+      (insert "  <url><loc>" opskumu-org--site-url
+              "gallery.html</loc><lastmod>" updated "</lastmod></url>\n")
       (dolist (post posts)
         (insert "  <url><loc>"
                 (opskumu-org--xml-escape
@@ -788,6 +996,7 @@ Helps `emacs --batch' find htmlize without a full interactive init."
     ;; Force: regenerate all HTML and recopy assets (avoids stale head/CSS).
     (org-publish-project "org" t)
     (opskumu-org--write-article-navs html)
+    (opskumu-org--write-gallery-page html)
     (opskumu-org--copy-referenced-images html images)
     (opskumu-org--copy-deployment-assets static html)
     (opskumu-org--write-discovery-files html)))

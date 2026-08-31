@@ -18,6 +18,7 @@ emacs --batch -Q -l ./scripts/publish.el -f opskumu-org-publish
 `src/*.org` 到 `html/`，复制 `static/` 资源及文章实际引用的本地图片，并生成：
 
 * 稳定的标题锚点和页面元信息
+* 从文章实际引用图片生成按日期排列的 `gallery.html` 图片墙
 * `atom.xml`、`sitemap.xml`、`robots.txt`
 * `CNAME`、`.nojekyll`、`favicon.ico`
 
