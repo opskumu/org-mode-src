@@ -1,5 +1,5 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/org.css"/>
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/site.css?v=20260929g"/>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/site.css?v=20260929i"/>
 #+HTML_HEAD: <link rel="icon" href="favicon.ico" sizes="any"/>
 #+HTML_HEAD: <meta property="og:site_name" content="Kumu's Blog"/>
 #+HTML_HEAD: <meta property="og:locale" content="zh_CN"/>

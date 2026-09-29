@@ -735,7 +735,7 @@ the blog export should use the same stable anchors instead of generated ids."
                 (opskumu-org--html-escape description) "\" />\n")
         (insert "<meta name=\"generator\" content=\"Org Mode\" />\n")
         (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/org.css\"/>\n")
-        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260929g\"/>\n")
+        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260929i\"/>\n")
         (insert "<link rel=\"icon\" href=\"favicon.ico\" sizes=\"any\"/>\n")
         (insert "<link rel=\"canonical\" href=\"" gallery-url "\"/>\n")
         (insert "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Kumu's Blog\" href=\""
