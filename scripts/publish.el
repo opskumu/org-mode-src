@@ -610,6 +610,12 @@ the blog export should use the same stable anchors instead of generated ids."
       (if (string-empty-p extra)
           html
         (setq html (replace-regexp-in-string "</head>" (concat extra "</head>") html t t)))
+      (setq html (replace-regexp-in-string
+                  "<body>"
+                  (if is-index
+                      "<body class=\"index-page\">"
+                    "<body class=\"article-page\">")
+                  html t t))
       (opskumu-org--inject-article-nav html))))
 
 (defun opskumu-org--html-description-from-file (file)
@@ -729,7 +735,7 @@ the blog export should use the same stable anchors instead of generated ids."
                 (opskumu-org--html-escape description) "\" />\n")
         (insert "<meta name=\"generator\" content=\"Org Mode\" />\n")
         (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/org.css\"/>\n")
-        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260831e\"/>\n")
+        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260929g\"/>\n")
         (insert "<link rel=\"icon\" href=\"favicon.ico\" sizes=\"any\"/>\n")
         (insert "<link rel=\"canonical\" href=\"" gallery-url "\"/>\n")
         (insert "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Kumu's Blog\" href=\""
@@ -751,11 +757,11 @@ the blog export should use the same stable anchors instead of generated ids."
         (when image-url
           (insert "<meta name=\"twitter:image\" content=\""
                   (opskumu-org--html-escape image-url) "\"/>\n"))
-        (insert "<meta name=\"theme-color\" content=\"#ffffff\"/>\n")
+        (insert "<meta name=\"theme-color\" content=\"#f5f7f6\"/>\n")
         (insert "<script type=\"application/ld+json\">"
                 (replace-regexp-in-string "</" "<\\/" (json-encode schema) t t)
                 "</script>\n")
-        (insert "<script defer src=\"js/site.js?v=20260831e\"></script>\n")
+        (insert "<script defer src=\"js/site.js?v=20260929f\"></script>\n")
         (insert "</head>\n<body class=\"gallery-page\">\n")
         (insert "<div id=\"preamble\" class=\"status\">"
                 opskumu-org--chrome-html "</div>\n")
@@ -771,6 +777,7 @@ the blog export should use the same stable anchors instead of generated ids."
                 (number-to-string post-count) " 篇文章</span><span>"
                 (number-to-string (hash-table-count year-counts))
                 " 个年份</span></p></header>\n")
+        (insert "<p class=\"gallery-years-hint\">向左滑动查看更多年份 ←</p>")
         (insert "<nav class=\"gallery-years\" aria-label=\"按年份浏览\">")
         (let ((seen-years (make-hash-table :test #'equal)))
           (dolist (entry entries)
