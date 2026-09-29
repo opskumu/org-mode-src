@@ -49,18 +49,6 @@
     (setq escaped (replace-regexp-in-string "<" "&lt;" escaped t t))
     (replace-regexp-in-string ">" "&gt;" escaped t t)))
 
-(defun opskumu-org--export-paper-ref-links (_backend)
-  "Export GitHub-friendly paper reference links with stable HTML anchors.
-GitHub's Org renderer needs `#ref-N' links to stay on the current page;
-the blog export should use the same stable anchors instead of generated ids."
-  (goto-char (point-min))
-  (while (re-search-forward "\\[\\[#\\(ref-[0-9]+\\)\\]\\[\\([^]\n]+\\)\\]\\]" nil t)
-    (replace-match
-     (format "@@html:<a href=\"#%s\">%s</a>@@"
-             (match-string 1)
-             (match-string 2))
-     t t)))
-
 (defun opskumu-org--current-page-url ()
   "Return the canonical URL for the Org file currently being exported."
   (let* ((file (buffer-file-name))
@@ -735,7 +723,7 @@ the blog export should use the same stable anchors instead of generated ids."
                 (opskumu-org--html-escape description) "\" />\n")
         (insert "<meta name=\"generator\" content=\"Org Mode\" />\n")
         (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/org.css\"/>\n")
-        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260929k\"/>\n")
+        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260929r\"/>\n")
         (insert "<link rel=\"icon\" href=\"favicon.ico\" sizes=\"any\"/>\n")
         (insert "<link rel=\"canonical\" href=\"" gallery-url "\"/>\n")
         (insert "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Kumu's Blog\" href=\""
@@ -761,7 +749,7 @@ the blog export should use the same stable anchors instead of generated ids."
         (insert "<script type=\"application/ld+json\">"
                 (replace-regexp-in-string "</" "<\\/" (json-encode schema) t t)
                 "</script>\n")
-        (insert "<script defer src=\"js/site.js?v=20260929f\"></script>\n")
+        (insert "<script defer src=\"js/site.js?v=20260929i\"></script>\n")
         (insert "</head>\n<body class=\"gallery-page\">\n")
         (insert "<div id=\"preamble\" class=\"status\">"
                 opskumu-org--chrome-html "</div>\n")
@@ -935,14 +923,19 @@ Helps `emacs --batch' find htmlize without a full interactive init."
           (when (file-directory-p d)
             (push d load-path)))))))
 
+(defun opskumu-org--wrap-html-table (table backend _info)
+  "Put exported HTML TABLE in a horizontal scroll container."
+  (if (org-export-derived-backend-p backend 'html)
+      (concat "<div class=\"table-scroll\">\n" table "\n</div>")
+    table))
+
 (defun opskumu-org--init-export-settings ()
   "Match `tpls/.spacemacs' + safe fallback when ELPA htmlize is missing in batch."
   (require 'ox-html)
-  (add-to-list 'org-export-before-parsing-functions
-               #'opskumu-org--export-paper-ref-links)
   (setq org-html-html5-fancy t
         org-html-doctype "html5"
         org-html-validation-link nil
+        org-html-prefer-user-labels t
         org-export-time-stamp-file nil
         org-export-with-sub-superscripts '{}
         org-export-default-language "zh-CN"
@@ -956,6 +949,8 @@ Helps `emacs --batch' find htmlize without a full interactive init."
           ("en" "<a class=\"author\" href=\"https://blog.opskumu.com\">%a</a><span class=\"postamble-sep\" aria-hidden=\"true\"> / </span><span class=\"date\">%d</span><span class=\"creator\"><a href=\"atom.xml\">Atom feed</a><span class=\"postamble-sep\" aria-hidden=\"true\"> · </span>Generated with <a href=\"https://www.gnu.org/software/emacs/\">Emacs</a> + <a href=\"https://orgmode.org/\">Org</a></span>")))
   (add-to-list 'org-export-filter-final-output-functions
                #'opskumu-org--inject-head-metadata)
+  (add-to-list 'org-export-filter-table-functions
+               #'opskumu-org--wrap-html-table)
   ;; `htmlize' is required when `org-html-htmlize-output-type' is `css';
   ;; without it, batch export prints a warning per source block.
   (opskumu-org--push-htmlize-from-elpa)
