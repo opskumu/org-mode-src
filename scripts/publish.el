@@ -723,7 +723,7 @@
                 (opskumu-org--html-escape description) "\" />\n")
         (insert "<meta name=\"generator\" content=\"Org Mode\" />\n")
         (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/org.css\"/>\n")
-        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260930a\"/>\n")
+        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260930d\"/>\n")
         (insert "<link rel=\"icon\" href=\"favicon.ico\" sizes=\"any\"/>\n")
         (insert "<link rel=\"canonical\" href=\"" gallery-url "\"/>\n")
         (insert "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Kumu's Blog\" href=\""
@@ -793,7 +793,7 @@
                       " 张图片</span></header>\n"))
             (insert "<article class=\"gallery-entry\">"
                     "<header class=\"gallery-entry-header\"><time datetime=\""
-                    date "\">" (replace-regexp-in-string "-" "." date)
+                    date "\">" date
                     "</time><h3><a href=\"" post-url "\">"
                     (opskumu-org--html-escape title)
                     "</a></h3><span>" (number-to-string (length images))
