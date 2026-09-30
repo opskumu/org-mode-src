@@ -723,7 +723,7 @@
                 (opskumu-org--html-escape description) "\" />\n")
         (insert "<meta name=\"generator\" content=\"Org Mode\" />\n")
         (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/org.css\"/>\n")
-        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260929r\"/>\n")
+        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260930a\"/>\n")
         (insert "<link rel=\"icon\" href=\"favicon.ico\" sizes=\"any\"/>\n")
         (insert "<link rel=\"canonical\" href=\"" gallery-url "\"/>\n")
         (insert "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Kumu's Blog\" href=\""
@@ -749,7 +749,7 @@
         (insert "<script type=\"application/ld+json\">"
                 (replace-regexp-in-string "</" "<\\/" (json-encode schema) t t)
                 "</script>\n")
-        (insert "<script defer src=\"js/site.js?v=20260929i\"></script>\n")
+        (insert "<script defer src=\"js/site.js?v=20260930a\"></script>\n")
         (insert "</head>\n<body class=\"gallery-page\">\n")
         (insert "<div id=\"preamble\" class=\"status\">"
                 opskumu-org--chrome-html "</div>\n")
