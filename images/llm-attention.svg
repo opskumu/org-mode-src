@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img">
+<title>注意力：先决定读取比例，再汇总内容</title><desc>单头示意；数值与向量为教学构造，非模型测量结果</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#3b6d88"/></marker></defs>
+<rect width="1200" height="100%" fill="#fff"/>
+<g font-family="PingFang SC,Noto Sans CJK SC,Arial,sans-serif">
+<text x="60" y="60" font-size="34" fill="#24313a" text-anchor="start" font-weight="600">注意力：先决定读取比例，再汇总内容</text>
+<text x="60" y="103" font-size="22" fill="#586971" text-anchor="start" font-weight="400">单头示意；数值与向量为教学构造，非模型测量结果</text>
+<rect x="330" y="145" width="540" height="65" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="600.0" y="186.5" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">输入表示 H</text>
+<path d="M600,210 V232 H215 V255" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M600,210 V255" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M600,232 H985 V255" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="75" y="260" width="280" height="90" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="215.0" y="301.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">Q：当前需要什么</text>
+<text x="215.0" y="332.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">H × WQ</text>
+<rect x="460" y="260" width="280" height="90" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="600.0" y="301.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">K：如何匹配</text>
+<text x="600.0" y="332.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">H × WK</text>
+<rect x="845" y="260" width="280" height="90" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="985.0" y="301.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">V：汇入什么内容</text>
+<text x="985.0" y="332.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">H × WV</text>
+<path d="M215,350 V385 H405 V410" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M600,350 V385 H405" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="75" y="415" width="665" height="85" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="407.5" y="453.5" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">点积打分、缩放、因果遮罩</text>
+<text x="407.5" y="484.5" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">QKᵀ / sqrt(d_k) + M</text>
+<path d="M405,500 V535" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="75" y="540" width="665" height="85" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="407.5" y="578.5" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">Softmax → 位置权重</text>
+<text x="407.5" y="609.5" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">示例：[0.2, 0.3, 0.5]</text>
+<path d="M405,625 V665" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M985,350 V707 H920" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="75" y="670" width="850" height="90" rx="12" fill="#f5eee8" stroke="none"/>
+<text x="500.0" y="711.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">对 Value 加权求和</text>
+<text x="500.0" y="742.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">output = 0.2 v₁ + 0.3 v₂ + 0.5 v₃</text>
+<text x="60" y="815" font-size="25" fill="#24313a" text-anchor="start" font-weight="400">若 v₁=[1,0]，v₂=[0,2]，v₃=[2,2]，则 output=[1.2,1.6]。</text>
+<text x="60" y="859" font-size="22" fill="#586971" text-anchor="start" font-weight="400">注意力中的 Softmax 面向上下文位置；最终输出的 Softmax 面向词表。</text>
+</g></svg>

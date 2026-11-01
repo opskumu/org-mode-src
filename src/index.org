@@ -1,12 +1,16 @@
 #+TITLE: Kumu's Blog
 #+SETUPFILE: ../tpls/tpl.org
-#+DATE: <2024-01-02 Tue>
+#+DATE: <2026-11-01 Sun>
 #+DESCRIPTION: Kumu 的个人博客，记录 Kubernetes、Linux、Emacs、容器与工程实践。
 #+OPTIONS: toc:nil num:nil 
 
 * Archive
 
 ------
+
+** 2026
+
+- 2026-11-01 [[file:llm-from-token-to-transformer.org][从 Token 到 Transformer：大语言模型如何训练与生成]]
 
 ** 2024
 

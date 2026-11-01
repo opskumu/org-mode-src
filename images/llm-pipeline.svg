@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="850" viewBox="0 0 1200 850" role="img">
+<title>大语言模型：从文字到下一个 token</title><desc>一次生成结束后，新 token 加入上下文，继续下一轮</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#3b6d88"/></marker></defs>
+<rect width="1200" height="100%" fill="#fff"/>
+<g font-family="PingFang SC,Noto Sans CJK SC,Arial,sans-serif">
+<text x="60" y="60" font-size="34" fill="#24313a" text-anchor="start" font-weight="600">大语言模型：从文字到下一个 token</text>
+<text x="60" y="103" font-size="22" fill="#586971" text-anchor="start" font-weight="400">一次生成结束后，新 token 加入上下文，继续下一轮</text>
+<rect x="140" y="145" width="650" height="78" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="465.0" y="180.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">文字输入</text>
+<text x="465.0" y="211.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">提示词与已有对话</text>
+<path d="M465,223 V246" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="140" y="249" width="650" height="78" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="465.0" y="284.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">Tokenizer</text>
+<text x="465.0" y="315.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">文字 → token ID 序列</text>
+<path d="M465,327 V350" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="140" y="353" width="650" height="78" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="465.0" y="388.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">Embedding 与位置机制</text>
+<text x="465.0" y="419.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">ID → 向量，并使模型能够利用顺序</text>
+<path d="M465,431 V454" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="140" y="457" width="650" height="78" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="465.0" y="492.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">多层 Transformer</text>
+<text x="465.0" y="523.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">注意力 + MLP + 残差 + 归一化</text>
+<path d="M465,535 V558" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="140" y="561" width="650" height="78" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="465.0" y="596.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">词表输出投影</text>
+<text x="465.0" y="627.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">为词表中的每个候选输出 logit</text>
+<path d="M465,639 V662" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="140" y="665" width="650" height="78" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="465.0" y="700.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">Softmax 与解码选择</text>
+<text x="465.0" y="731.0" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">概率分布 → 选中下一个 token</text>
+<path d="M790,704 H1050 V340 H465" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="935" y="470" font-size="24" fill="#24313a" text-anchor="middle" font-weight="400">追加到上下文</text>
+<text x="935" y="508" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">复用固定模型参数</text>
+<text x="60" y="809" font-size="22" fill="#586971" text-anchor="start" font-weight="400">表示方式、网络计算、解码选择是三个不同层次。</text>
+</g></svg>

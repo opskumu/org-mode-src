@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img">
+<title>一个常见的 Pre-norm Transformer Block</title><desc>跨位置汇总信息，再逐位置做非线性变换；残差路径保留已有表示</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#3b6d88"/></marker></defs>
+<rect width="1200" height="100%" fill="#fff"/>
+<g font-family="PingFang SC,Noto Sans CJK SC,Arial,sans-serif">
+<text x="60" y="60" font-size="34" fill="#24313a" text-anchor="start" font-weight="600">一个常见的 Pre-norm Transformer Block</text>
+<text x="60" y="103" font-size="22" fill="#586971" text-anchor="start" font-weight="400">跨位置汇总信息，再逐位置做非线性变换；残差路径保留已有表示</text>
+<text x="620" y="157" font-size="27" fill="#24313a" text-anchor="middle" font-weight="400">输入 h：[n, d]</text>
+<path d="M620,170 V205" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M620,180 H230 V425 H588" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="370" y="210" width="500" height="64" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="620.0" y="251.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">Norm</text>
+<path d="M620,274 V302" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="370" y="307" width="500" height="75" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="620.0" y="340.5" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">因果多头注意力</text>
+<text x="620.0" y="371.5" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">跨位置汇总信息</text>
+<path d="M620,382 V396" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<circle cx="620" cy="425" r="24" fill="#fff" stroke="#3b6d88" stroke-width="2.5"/>
+<text x="620" y="435" font-size="32" fill="#24313a" text-anchor="middle" font-weight="400">+</text>
+<text x="145" y="310" font-size="24" fill="#24313a" text-anchor="start" font-weight="400">残差</text>
+<text x="920" y="432" font-size="20" fill="#24313a" text-anchor="middle" font-weight="400">u = h + Attention(Norm(h))</text>
+<path d="M620,449 V482" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M620,460 H230 V700 H588" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="370" y="487" width="500" height="64" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="620.0" y="528.0" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">Norm</text>
+<path d="M620,551 V577" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="370" y="582" width="500" height="75" rx="12" fill="#e9f1f5" stroke="none"/>
+<text x="620.0" y="615.5" font-size="27" fill="#24313a" text-anchor="middle" font-weight="500">MLP / 前馈网络</text>
+<text x="620.0" y="646.5" font-size="21" fill="#586971" text-anchor="middle" font-weight="400">共享参数，逐位置加工</text>
+<path d="M620,657 V671" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<circle cx="620" cy="700" r="24" fill="#fff" stroke="#3b6d88" stroke-width="2.5"/>
+<text x="620" y="710" font-size="32" fill="#24313a" text-anchor="middle" font-weight="400">+</text>
+<text x="145" y="600" font-size="24" fill="#24313a" text-anchor="start" font-weight="400">残差</text>
+<text x="930" y="707" font-size="20" fill="#24313a" text-anchor="middle" font-weight="400">y = u + MLP(Norm(u))</text>
+<path d="M620,724 V770" fill="none" stroke="#3b6d88" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="620" y="811" font-size="27" fill="#24313a" text-anchor="middle" font-weight="400">输出 y：[n, d] → 下一层</text>
+<text x="60" y="861" font-size="22" fill="#586971" text-anchor="start" font-weight="400">图示为一种结构；归一化顺序、激活函数、注意力与位置机制因模型而异。</text>
+</g></svg>

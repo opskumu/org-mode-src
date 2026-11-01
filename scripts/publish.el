@@ -318,10 +318,14 @@
                        (match-string 1 tag)))
              local-relative
              local-file)
-        (when (and src (string-prefix-p opskumu-org--image-cdn-url src))
+        (cond
+         ((and src (string-prefix-p opskumu-org--image-cdn-url src))
           (setq local-relative
-                (substring src (length opskumu-org--image-cdn-url))
-                local-file (expand-file-name local-relative images-root))
+                (substring src (length opskumu-org--image-cdn-url))))
+         ((and src (string-prefix-p "../images/" src))
+          (setq local-relative (substring src (length "../images/")))))
+        (when local-relative
+          (setq local-file (expand-file-name local-relative images-root))
           (when (file-readable-p local-file)
             (setq tag
                   (replace-regexp-in-string
