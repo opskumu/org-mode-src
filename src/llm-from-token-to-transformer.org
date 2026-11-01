@@ -3,6 +3,8 @@
 #+DATE: <2026-11-01 Sun>
 #+DESCRIPTION: 从初学者视角，借助图解与计算示例理解 Token、神经网络、训练、注意力、Transformer 和自回归生成，并延伸到 KV Cache、上下文成本与幻觉。
 #+OPTIONS: toc:2
+#+HTML_HEAD: <link rel="stylesheet" href="css/llm-temperature.css?v=20261101a"/>
+#+HTML_HEAD: <script defer src="js/llm-temperature.js?v=20261101a"></script>
 
 大语言模型每天都在回答问题、写代码、总结文档。不过，从输入一句话到收到一段回答，中间究竟发生了什么？Token、Embedding、Attention、训练、推理这些词，又是怎样连在一起的？
 
@@ -279,7 +281,9 @@ RMSNorm(h) = gamma * h / sqrt(mean(h * h) + epsilon)
 p_i=\frac{\exp(z_i/\tau)}{\sum_j\exp(z_j/\tau)}
 \]
 
-对于正温度，候选排序不变，但概率的集中程度改变。下方固定三个候选的 logits 为 =[2, 1, -1]= ，下表比较不同温度下的概率分布。
+对于正温度，候选排序不变，但概率的集中程度改变。下方固定三个候选的 logits 为 =[2, 1, -1]= 。网页版可以拖动滑块观察概率变化，表格列出三个温度下的结果，便于对照和在其他格式中阅读。
+
+#+INCLUDE: "../tpls/llm-temperature.html" export html
 
 | 温度 | 候选 A | 候选 B | 候选 C |
 |------+--------+--------+--------|

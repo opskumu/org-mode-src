@@ -75,6 +75,8 @@ git -C html status --short --branch
 
 章节使用 Org 原生标题，编号由导出器生成。默认保留自动编号；`#+OPTIONS: num:nil` 会关闭该篇文章的章节编号，`toc:2` 表示目录收录到第二级。正文、列表、表格、引用、脚注和代码块也应使用 Org 语法。尽量让源文件在通用 Org 阅读器和其他导出后端中保留语义，避免把正文写成 HTML 导出块或依赖某篇文章专用的 CSS、JavaScript。公式优先使用 Org 支持的 LaTeX 数学语法，例如 `\[ ... \]`；HTML 导出由 Org 的 MathJax 支持渲染。
 
+有助于理解的网页交互可以作为可选增强保留。将交互模板独立放在 `tpls/`，使用原生 `#+INCLUDE: "../tpls/example.html" export html` 引入，并按需通过文章的 `#+HTML_HEAD` 加载静态资源；同时保留原生 Org 表格或文字说明，保证交互不是核心内容的唯一载体。温度与候选概率示例采用这种方式。
+
 博客图片以阿里云 OSS 为线上来源，本地 `images/` 保留同名备份。文章优先使用标准 Org 图片链接：
 
 ```org
