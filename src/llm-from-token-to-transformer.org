@@ -3,8 +3,6 @@
 #+DATE: <2026-11-01 Sun>
 #+DESCRIPTION: 从初学者视角，借助图解与计算示例理解 Token、神经网络、训练、注意力、Transformer 和自回归生成，并延伸到 KV Cache、上下文成本与幻觉。
 #+OPTIONS: toc:2
-#+HTML_HEAD: <link rel="stylesheet" href="css/llm-explainer.css?v=20261101a"/>
-#+HTML_HEAD: <script defer src="js/llm-temperature.js?v=20261101a"></script>
 
 大语言模型每天都在回答问题、写代码、总结文档。不过，从输入一句话到收到一段回答，中间究竟发生了什么？Token、Embedding、Attention、训练、推理这些词，又是怎样连在一起的？
 
@@ -58,11 +56,13 @@ BPE（Byte Pair Encoding）的一种常见训练方式是：从较小单位开�
 
 假设语料只有 =low low lower= ，为便于说明，先按字符切分，并禁止跨词边界合并：
 
-#+begin_example
-初始：    l | o | w    l | o | w    l | o | w | e | r
-第一步： lo | w       lo | w       lo | w | e | r
-第二步： low          low          low | e | r
-#+end_example
+| 阶段 | 第一个 low | 第二个 low | lower |
+|------+------------+------------+-------|
+| 初始 | l · o · w | l · o · w | l · o · w · e · r |
+| 合并 l + o | lo · w | lo · w | lo · w · e · r |
+| 合并 lo + w | low | low | low · e · r |
+
+表中的 =·= 只用于标出 token 边界，不属于原始文本。每个单元格表示同一个词在该步骤的切分结果。
 
 第一步中， =l,o= 和 =o,w= 都出现三次；假设按预先约定的并列规则选择前者。合并后， =lo,w= 成为高频相邻对，再把它合并为 =low= 。真实分词器还可能使用字节表示、预切分、特殊 token 等机制。
 
@@ -110,11 +110,11 @@ MLP(x) = activation(x W1 + b1) W2 + b2
 
 假设一句话由 x₁ 到 xₙ 组成，概率链式法则允许我们这样分解：
 
-#+begin_export html
-<div class="llm-math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="序列概率等于各位置条件概率的乘积"><mrow><msub><mi>P</mi><mi>θ</mi></msub><mo>(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>x</mi><mi>n</mi></msub><mo>)</mo><mo>=</mo><munderover><mo>∏</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mi>P</mi><mi>θ</mi></msub><mo>(</mo><msub><mi>x</mi><mi>t</mi></msub><mo>|</mo><msub><mi>x</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo>)</mo></mrow></math></div>
-#+end_export
+\[
+P_\theta(x_1,\ldots,x_n)=\prod_{t=1}^{n}P_\theta(x_t\mid x_{1:t-1})
+\]
 
-这里 =x_<t= 的含义是位置 t 之前的所有 token，θ 表示模型参数。这组条件分布定义了模型自己的联合分布 Pθ。链式法则本身是恒等式；模型学习的是对真实数据分布的近似。
+这里 =x_{1:t-1}= 的含义是位置 t 之前的所有 token，θ 表示模型参数。这组条件分布定义了模型自己的联合分布 Pθ。链式法则本身是恒等式；模型学习的是对真实数据分布的近似。
 
 把一整段文字作为训练样本时，可以用其已有前缀作为输入，用紧接着的 token 作为目标。训练标签就在原文里，这通常称为自监督学习。
 
@@ -131,9 +131,9 @@ MLP(x) = activation(x W1 + b1) W2 + b2
 
 对于一段文本，典型的平均损失是：
 
-#+begin_export html
-<div class="llm-math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="损失是各位置真实 token 的负对数概率的平均值"><mrow><mi mathvariant="script">L</mi><mo>=</mo><mo>−</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>log</mi><msub><mi>P</mi><mi>θ</mi></msub><mo>(</mo><msub><mi>x</mi><mi>t</mi></msub><mo>|</mo><msub><mi>x</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo>)</mo></mrow></math></div>
-#+end_export
+\[
+\mathcal{L}=-\frac{1}{n}\sum_{t=1}^{n}\log P_\theta(x_t\mid x_{1:t-1})
+\]
 
 这就是下一 token 预测中的交叉熵，也可以从最大似然估计得到。训练并不要求每个上下文只能有唯一的合理续写：很多上下文确实有多种可能，模型需要在大量样本上学习这种分布。
 
@@ -186,9 +186,9 @@ Value 3 的影响更大，但输出并不是把 Value 3 原样复制过来，而
 
 标准的缩放点积注意力写为：
 
-#+begin_export html
-<div class="llm-math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="注意力等于 Q K 转置除以根号 d k 加遮罩，再经 Softmax 后乘 V"><mrow><mtext>Attention</mtext><mo>(</mo><mi>Q</mi><mo>,</mo><mi>K</mi><mo>,</mo><mi>V</mi><mo>)</mo><mo>=</mo><mtext>softmax</mtext><mo>(</mo><mfrac><mrow><mi>Q</mi><msup><mi>K</mi><mi>⊤</mi></msup></mrow><msqrt><msub><mi>d</mi><mi>k</mi></msub></msqrt></mfrac><mo>+</mo><mi>M</mi><mo>)</mo><mi>V</mi></mrow></math></div>
-#+end_export
+\[
+\operatorname{Attention}(Q,K,V)=\operatorname{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}+M\right)V
+\]
 
 这里 dₖ 是 Query 和 Key 的维度，M 是遮罩。若分量近似独立、均值为 0、方差为 1，点积的方差会随维度增长；除以维度的平方根，有助于控制分数尺度，避免 Softmax 过度饱和。这是理解该缩放项的一个经典动机，详见 [[https://arxiv.org/html/1706.03762v7#S3.SS2][Attention Is All You Need]]。
 
@@ -275,23 +275,11 @@ RMSNorm(h) = gamma * h / sqrt(mean(h * h) + epsilon)
 
 对 logits z 使用温度 τ 后，候选 i 的概率为：
 
-#+begin_export html
-<div class="llm-math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="候选 i 的概率等于 exp z i 除以温度，再除以所有候选指数值之和"><mrow><msub><mi>p</mi><mi>i</mi></msub><mo>=</mo><mfrac><mrow><mi>exp</mi><mo>(</mo><msub><mi>z</mi><mi>i</mi></msub><mo>/</mo><mi>τ</mi><mo>)</mo></mrow><mrow><munder><mo>∑</mo><mi>j</mi></munder><mi>exp</mi><mo>(</mo><msub><mi>z</mi><mi>j</mi></msub><mo>/</mo><mi>τ</mi><mo>)</mo></mrow></mfrac></mrow></math></div>
-#+end_export
+\[
+p_i=\frac{\exp(z_i/\tau)}{\sum_j\exp(z_j/\tau)}
+\]
 
-对于正温度，候选排序不变，但概率的集中程度改变。下方固定三个候选的 logits 为 =[2, 1, -1]= ，可以拖动滑块观察变化。
-
-#+begin_export html
-<div class="llm-temperature" id="llm-temperature-demo" role="group" aria-labelledby="llm-temperature-title">
-  <p id="llm-temperature-title" class="llm-demo-title">温度与候选概率</p>
-  <label for="llm-temperature-input">温度 τ：<output id="llm-temperature-value" for="llm-temperature-input">1.00</output></label>
-  <input id="llm-temperature-input" type="range" min="0.1" max="2" step="0.05" value="1"/>
-  <div class="llm-prob-row"><span>候选 A</span><div class="llm-prob-track"><div data-prob-bar="0" style="width:70.54%"></div></div><span data-prob-value="0">70.5%</span></div>
-  <div class="llm-prob-row"><span>候选 B</span><div class="llm-prob-track"><div data-prob-bar="1" style="width:25.95%"></div></div><span data-prob-value="1">25.9%</span></div>
-  <div class="llm-prob-row"><span>候选 C</span><div class="llm-prob-track"><div data-prob-bar="2" style="width:3.51%"></div></div><span data-prob-value="2">3.5%</span></div>
-  <p class="llm-demo-note" id="llm-temperature-status" aria-live="polite">τ = 1，保留原始分布。数值为教学示例。</p>
-</div>
-#+end_export
+对于正温度，候选排序不变，但概率的集中程度改变。下方固定三个候选的 logits 为 =[2, 1, -1]= ，下表比较不同温度下的概率分布。
 
 | 温度 | 候选 A | 候选 B | 候选 C |
 |------+--------+--------+--------|
@@ -408,10 +396,6 @@ KV 字节数 ≈ 2 × B × L × n × Hkv × dh × s
 
 * 视频出处与回看索引
 
-#+begin_export html
-<details class="llm-video-index"><summary>展开视频时间索引（按原视频顺序，正文已按学习依赖重排）</summary>
-#+end_export
-
 原帖：[[https://x.com/lesliedqbb/status/2114622983377666179][Dobby（@lesliedqbb）分享的视频]]。下列时间均为帖子内视频的位置，部分边界取近似值。
 
 | 视频位置 | 内容 |
@@ -426,10 +410,6 @@ KV 字节数 ≈ 2 × B × L × n × Hkv × dh × s
 | 约 2:20—结尾 | 残差连接、LayerNorm、RMSNorm，简述卷积 |
 
 相关官方课堂可对照 Stanford Online 发布的 [[https://www.youtube.com/watch?v=pwQ0l4hFCVI][CS229 Lecture 14: Transformers, In-Context Learning]] 与 [[https://www.youtube.com/watch?v=fRM41w9jzQo][Lecture 7: Neural Networks 1 (Architecture)]]。它们是相关课程来源入口，本文时间索引以 X 内嵌视频为准。
-
-#+begin_export html
-</details>
-#+end_export
 
 * 参考资料
 

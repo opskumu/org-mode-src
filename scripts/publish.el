@@ -20,7 +20,7 @@
 
 (defconst opskumu-org--image-cdn-url
   "https://opskumu.oss-cn-beijing.aliyuncs.com/images/"
-  "Legacy image URL prefix rewritten to local published assets when possible.")
+  "Canonical OSS image URL prefix; local copies provide backup metadata only.")
 
 (defconst opskumu-org--archive-excluded-files '("index.org" "resume.org")
   "Org files intentionally excluded from the public archive.")
@@ -306,7 +306,7 @@
             dimensions)))))))
 
 (defun opskumu-org--rewrite-image-tags (html)
-  "Localize available image URLs and add stable loading/dimension attributes."
+  "Preserve OSS URLs and add loading/dimension attributes from local backups."
   (let ((start 0)
         (first-image t)
         (images-root (expand-file-name "images/" opskumu-org-repo-root)))
@@ -326,7 +326,8 @@
           (setq local-relative (substring src (length "../images/")))))
         (when local-relative
           (setq local-file (expand-file-name local-relative images-root))
-          (when (file-readable-p local-file)
+          (when (and (file-readable-p local-file)
+                     (string-prefix-p "../images/" src))
             (setq tag
                   (replace-regexp-in-string
                    (concat "src=\"" (regexp-quote src) "\"")
@@ -727,7 +728,7 @@
                 (opskumu-org--html-escape description) "\" />\n")
         (insert "<meta name=\"generator\" content=\"Org Mode\" />\n")
         (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/org.css\"/>\n")
-        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20260930d\"/>\n")
+        (insert "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/site.css?v=20261101a\"/>\n")
         (insert "<link rel=\"icon\" href=\"favicon.ico\" sizes=\"any\"/>\n")
         (insert "<link rel=\"canonical\" href=\"" gallery-url "\"/>\n")
         (insert "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Kumu's Blog\" href=\""
@@ -896,8 +897,9 @@
         (goto-char (point-min))
         (while (re-search-forward "src=\"images/\\([^\"]+\\)\"" nil t)
           (puthash (match-string 1) t referenced))))
-    (when (file-directory-p target-root)
-      (delete-directory target-root t))
+    ;; Keep already published image URLs valid when articles switch to OSS.
+    ;; Only explicitly local article references need deployment copies.
+    (make-directory target-root t)
     (maphash
      (lambda (relative _)
        (unless (or (file-name-absolute-p relative)
@@ -943,6 +945,9 @@ Helps `emacs --batch' find htmlize without a full interactive init."
         org-export-time-stamp-file nil
         org-export-with-sub-superscripts '{}
         org-export-default-language "zh-CN"
+        org-html-mathjax-options
+        (cons '(path "js/vendor/mathjax/tex-svg.js?v=3.2.2")
+              (assq-delete-all 'path org-html-mathjax-options))
         org-html-preamble t
         org-html-preamble-format
         `(("zh-CN" ,opskumu-org--chrome-html)

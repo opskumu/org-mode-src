@@ -17,7 +17,7 @@
 | --- | --- |
 | `src/*.org` | 文章正文、标题、日期等 |
 | `src/index.org` | 首页文章归档 |
-| `images/` | 文章使用的本地图片 |
+| `images/` | OSS 图片的本地备份，以及配图的可编辑源文件 |
 | `tpls/tpl.org` | 文章共用的 Org 导出设置与资源引用 |
 | `static/css/site.css` | 全站样式 |
 | `static/js/site.js` | 目录、归档、图片查看等浏览器交互 |
@@ -73,9 +73,62 @@ git -C html status --short --branch
 
 归档中的文件名、标题、日期必须与文章一致。修改文章标题或发布日期时，也要更新归档。当前只有 `index.org` 和 `resume.org` 不要求列入归档。
 
-章节使用 Org 原生标题，编号由导出器生成。默认保留自动编号；`#+OPTIONS: num:nil` 会关闭该篇文章的章节编号，`toc:2` 表示目录收录到第二级。正文、列表、表格、引用和代码块也应使用 Org 语法。
+章节使用 Org 原生标题，编号由导出器生成。默认保留自动编号；`#+OPTIONS: num:nil` 会关闭该篇文章的章节编号，`toc:2` 表示目录收录到第二级。正文、列表、表格、引用、脚注和代码块也应使用 Org 语法。尽量让源文件在通用 Org 阅读器和其他导出后端中保留语义，避免把正文写成 HTML 导出块或依赖某篇文章专用的 CSS、JavaScript。公式优先使用 Org 支持的 LaTeX 数学语法，例如 `\[ ... \]`；HTML 导出由 Org 的 MathJax 支持渲染。
 
-本地图片放在 `images/`，文章中可写为 `[[file:../images/example.jpg]]`。生成脚本会复制文章实际引用的本地图片，并重建 `html/images/`，因此图片原件应保存在源码仓库。
+博客图片以阿里云 OSS 为线上来源，本地 `images/` 保留同名备份。文章优先使用标准 Org 图片链接：
+
+```org
+#+CAPTION: 图片说明
+[[https://opskumu.oss-cn-beijing.aliyuncs.com/images/example.png]]
+```
+
+新增图片应先通过 `scripts/oss_images.py`（见下文）或其他 OSS 工具上传，并验证线上地址可访问，再发布引用该地址的文章。不要只构造一个尚未上传的 OSS 链接。原图备份放在 `images/example.png`；SVG、绘图脚本等可编辑源文件也应保存，以便后续更新。
+
+生成脚本保留 OSS 地址，仅从本地备份读取图片尺寸等元数据，不应把 OSS 链接自动改成博客站内地址。只有明确使用 `[[file:../images/example.png]]` 的本地引用，才生成相应的站点图片副本。已有发布图片不会因改用 OSS 自动删除，以免旧地址失效；清理过期副本时需另行确认引用情况。
+
+### 使用仓库内的 OSS 上传脚本
+
+`scripts/oss_images.py` 使用[阿里云官方 Python SDK V2](https://www.alibabacloud.com/help/en/oss/developer-reference/simple-upload-using-oss-sdk-for-python-v2)。默认目标是 `opskumu` Bucket、`cn-beijing` 地域的 `images/` 目录，文件名与本地备份的相对路径保持一致。
+
+只预览时不需要依赖或凭据，也不会联网或修改文章：
+
+```bash
+python3 scripts/oss_images.py --article src/llm-from-token-to-transformer.org --dry-run
+```
+
+首次上传前，使用 Python 3.10 或以上版本创建隔离环境，并安装已固定版本的 SDK：
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r scripts/requirements-oss.txt
+```
+
+凭据仅从 `OSS_ACCESS_KEY_ID`、`OSS_ACCESS_KEY_SECRET` 环境变量读取；使用 STS 临时凭据时，还需设置 `OSS_SESSION_TOKEN`。在本机 zsh 终端输入，不要把真实凭据写进脚本、文档、Git 或聊天：
+
+```zsh
+read -r "OSS_ACCESS_KEY_ID?OSS AccessKey ID: "
+read -rs "OSS_ACCESS_KEY_SECRET?OSS AccessKey Secret: "
+echo
+export OSS_ACCESS_KEY_ID OSS_ACCESS_KEY_SECRET
+```
+
+在同一个终端执行：
+
+```bash
+.venv/bin/python scripts/oss_images.py --article src/llm-from-token-to-transformer.org --update-links
+```
+
+脚本只收集文章中独立成行的本地图片链接，忽略代码、示例、HTML 导出块和注释块。图片必须已在仓库 `images/` 中备份。它会先检查整批目标：同名且内容一致则跳过，同名但内容不同则默认停止；新上传同时使用 OSS 服务端的禁止覆盖选项，防止检查后出现同名对象时被意外覆盖。确需替换已有图片时，显式传入 `--overwrite`。
+
+上传使用 Content-MD5 校验，再从公开地址读取实际内容做 SHA-256 校验。只有整批图片都验证成功，才原子替换文章中的图片链接；如果文章在上传期间发生修改，则停止改写。部分上传失败时已经上传的对象会保留，修复问题后可以重新执行。脚本不会修改 Bucket ACL，也不会执行 Git 提交或推送。
+
+也可以上传明确指定的单张或多张图片，并获得标准 Org 图片链接：
+
+```bash
+.venv/bin/python scripts/oss_images.py images/llm-pipeline.png images/llm-attention.png
+```
+
+使用前确认凭据具有目标 `opskumu/images/` 路径的 `oss:PutObject` 权限，图片公开读取沿用现有 Bucket 配置。上传完成并检查 Org 变更后，再按下文生成和发布站点。
 
 修改 CSS 或 JavaScript 后，同步更新下面两处对应资源的 `?v=` 版本号，例如 `20260930b`：
 
@@ -90,7 +143,9 @@ git -C html status --short --branch
 emacs --batch -Q -l ./scripts/publish.el -f opskumu-org-publish
 ```
 
-脚本先校验归档，再重新导出全部文章、复制静态资源和引用图片，生成文章导航、稳定的标题锚点、页面元信息、`gallery.html`、`atom.xml`、`sitemap.xml`、`robots.txt` 及域名配置等文件。
+脚本先校验归档，再重新导出全部文章、复制静态资源和明确引用的本地图片，生成文章导航、稳定的标题锚点、页面元信息、`gallery.html`、`atom.xml`、`sitemap.xml`、`robots.txt` 及域名配置等文件。OSS 图片由线上地址提供，本地备份不会替代该地址。
+
+原生 Org/LaTeX 公式通过本地固定版本 MathJax 渲染，不依赖外部字体 CDN；普通无公式文章不加载该组件。
 
 **这个命令只生成本地文件，不会执行 Git 提交、推送或线上部署。** 输出中的 `Publishing file` 也表示本地导出。
 
